@@ -37,12 +37,12 @@ var BabelClient = function (config) {
 /**
  * Get a feed based off a target identifier. Return either a list of feed identifiers, or hydrate it and
  * pass back the data as well.
- * @param {string} target
- * @param {string} token
- * @param {object} options
- * @param {function} callback
+ * @param {string} target Feed target identifier
+ * @param {string} token Persona token
+ * @param {boolean} hydrate Gets a fully hydrated feed, i.e. actually contains the posts
+ * @callback callback
  */
-BabelClient.prototype.getTargetFeed = function(target, token, options, callback){
+BabelClient.prototype.getTargetFeed = function(target, token, hydrate, callback){
 
     if(!target){
         throw new Error('Missing target');
@@ -51,10 +51,10 @@ BabelClient.prototype.getTargetFeed = function(target, token, options, callback)
         throw new Error('Missing Persona token');
     }
 
-    options = options || {};
+    hydrate = hydrate || false;
 
     var requestOptions = {
-        url: this.config.babel_host+':'+this.config.babel_port+'/feeds/targets/'+md5(target)+'/activity/annotations'+((options.hydrate && options.hydrate === true) ? '/hydrate' : ''),
+        url: this.config.babel_host+':'+this.config.babel_port+'/feeds/targets/'+md5(target)+'/activity/annotations'+((hydrate === true) ? '/hydrate' : ''),
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token
@@ -82,20 +82,27 @@ BabelClient.prototype.getTargetFeed = function(target, token, options, callback)
 
 /**
  * Get annotations feed based off options passed in
- * @param {string} token
- * @param {object} options
- * @param {function} callback
+ * @param {string} token Persona token
+ * @param {object} querystringMap Options that can be used to query an annotations feed
+ * @param {string} querystringMap.hasTarget.uri Restrict to a specific target
+ * @param {string} querystringMap.annotatedBy Restrict to annotations made by a specific user
+ * @param {string} querystringMap.hasBody.uri Restrict to a specific body uri
+ * @param {string} querystringMap.hasBody.type Restrict to annotations by the type of the body
+ * @param {string} querystringMap.q Perform a text search on hasBody.char field. If used, annotatedBy and hasTarget will be ignored
+ * @param {string} querystringMap.limit Limit returned results
+ * @param {string} querystringMap.offset Offset start of results
+ * @callback callback
  */
-BabelClient.prototype.getAnnotations = function(token, options, callback){
+BabelClient.prototype.getAnnotations = function(token, querystringMap, callback){
 
     if(!token){
         throw new Error('Missing Persona token');
     }
 
-    options = options || {};
+    querystringMap = querystringMap || {};
 
     var requestOptions = {
-        url: this.config.babel_host+':'+this.config.babel_port+'/annotations?'+querystring.stringify(options),
+        url: this.config.babel_host+':'+this.config.babel_port+'/annotations?'+querystring.stringify(querystringMap),
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token

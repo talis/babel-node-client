@@ -2,7 +2,7 @@
 
 var should = require('should'),
     assert = require('assert'),
-    babel = require('../index.js'),
+    babel = require('../../index.js'),
     rewire = require("rewire");
 
 describe("Babel Node Client Test Suite", function(){
@@ -75,21 +75,28 @@ describe("Babel Node Client Test Suite", function(){
             done();
         });
         it("should not cause an error if no options passed in", function(done){
+            var babel = rewire("../../index.js");
+
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
             });
 
-            var getTargetFeed = function(){
-                return babelClient.getTargetFeed('TARGET', 'secret', null, function(err, result){});
+            var requestStub = function(options, callback){
+                callback(null, {}, JSON.stringify({}));
             };
 
-            getTargetFeed.should.not.throw();
+            babel.__set__("request", requestStub);
+
+            babelClient.getTargetFeed('TARGET', 'secret', null, function(err){
+                (err === null).should.be.true;
+            });
+
             done();
         });
 
         it("get target feed should return an error if call to request returns an error", function(done){
-            var babel = rewire("../index.js");
+            var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
@@ -111,7 +118,7 @@ describe("Babel Node Client Test Suite", function(){
         });
 
         it("get target feed should return an error (401) if persona token is invalid", function(done){
-            var babel = rewire("../index.js");
+            var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
@@ -134,7 +141,7 @@ describe("Babel Node Client Test Suite", function(){
         });
 
         it("get target feed should return an error (404) if babel returns no feed", function(done){
-            var babel = rewire("../index.js");
+            var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
@@ -156,7 +163,7 @@ describe("Babel Node Client Test Suite", function(){
             done();
         });
         it("get target feed should return results if no error from babel and feed is found", function(done){
-            var babel = rewire("../index.js");
+            var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
@@ -230,7 +237,7 @@ describe("Babel Node Client Test Suite", function(){
         });
 
         it("get target feed should return an error (401) if persona token is invalid", function(done){
-            var babel = rewire("../index.js");
+            var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
@@ -253,7 +260,7 @@ describe("Babel Node Client Test Suite", function(){
         });
 
         it("annotations feed should return an error if call to request returns an error", function(done){
-            var babel = rewire("../index.js");
+            var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
@@ -275,7 +282,7 @@ describe("Babel Node Client Test Suite", function(){
         });
 
         it("annotations feed should return results if no error from babel", function(done){
-            var babel = rewire("../index.js");
+            var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
