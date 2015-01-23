@@ -10,11 +10,10 @@ var ERROR = "error";
 
 /**
  * Create a babel client
- * Required config:
- *      - babel_host
- *      - babel_port
  *
- * @param {object} config
+ * @param {object} config Babel Client config
+ * @param {string} config.babel_host Babel host
+ * @param {string} config.babel_port Babel port
  * @constructor
  */
 var BabelClient = function (config) {
@@ -36,7 +35,8 @@ var BabelClient = function (config) {
 
 /**
  * Get a feed based off a target identifier. Return either a list of feed identifiers, or hydrate it and
- * pass back the data as well.
+ * pass back the data as well
+ *
  * @param {string} target Feed target identifier
  * @param {string} token Persona token
  * @param {boolean} hydrate Gets a fully hydrated feed, i.e. actually contains the posts
@@ -82,6 +82,7 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, callback)
 
 /**
  * Get annotations feed based off options passed in
+ *
  * @param {string} token Persona token
  * @param {object} querystringMap Options that can be used to query an annotations feed
  * @param {string} querystringMap.hasTarget.uri Restrict to a specific target
@@ -132,6 +133,7 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
 
 /**
  * Log wrapping functions
+ * 
  * @param severity ( debug or error )
  * @param message
  * @returns {boolean}
