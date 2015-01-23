@@ -12,7 +12,7 @@ var ERROR = "error";
  * Create a babel client
  *
  * @param {object} config Babel Client config
- * @param {string} config.babel_host Babel host
+ * @param {string} config.babel_host Babel host (must start with http or https)
  * @param {string} config.babel_port Babel port
  * @constructor
  */
@@ -133,7 +133,7 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
 
 /**
  * Log wrapping functions
- * 
+ *
  * @param severity ( debug or error )
  * @param message
  * @returns {boolean}
