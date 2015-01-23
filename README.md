@@ -4,11 +4,9 @@ Node Client for Babel
 ![Build status](https://travis-ci.org/talis/babel-node-client.svg?branch=master)
 
 ## Getting Started
-Install the module by adding the following line to `packages.json`:
+Install the module:
 
-```
-"babel_client": "git://github.com/talis/babel-node-client.git#0.1.0"
-```
+```npm install node_client@git://github.com/talis/babel-node-client.git#0.1.0 --save```
 
 Create a babel client as follows:
 
