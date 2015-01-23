@@ -20,11 +20,36 @@ var babelClient = babel.createClient({
 
 ## Documentation
 
+To use any of the Babel client functions, you must have a Persona token. Read the [Persona docs](http://docs.talispersona.apiary.io/), or try
+out the [Persona node client](https://github.com/talis/persona-node-client).
+
 ### Target Feeds
+Get a feed based on a target
+```javascript
+var target = 'stay-on-target';
+var token = req.personaClient.getToken(req);
+babelClient.getTargetFeed(target, token, {}, function(error, results){
+    // do stuff
+});
+```
+
+If the token is invalid, the ```error``` object will have an http_code of 401.
+If the feed cannot be found in babel, the ```error``` object will have an http_code of 404.
+
+#### Options to use
+* hydrate: Populate feed with data
+
 
 ### Annotations
+Get a feed of annotations back
+```javascript
+var token = req.personaClient.getToken(req);
+babelClient.getAnnotations(token, {}, function(error, results){
+    // do stuff
+});
+```
 
-
+If the token is invalid, the ```error``` object will have an http_code of 401.
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).

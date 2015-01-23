@@ -8,11 +8,50 @@ var request = require('request'),
 var DEBUG = "debug";
 var ERROR = "error";
 
+/**
+ * Create a babel client
+ * Required config:
+ *      - babel_host
+ *      - babel_port
+ *
+ * @param {object} config
+ * @constructor
+ */
 var BabelClient = function (config) {
+
     this.config = config || {};
+
+    var requiredParams = ['babel_host', 'babel_port'];
+
+    for(var i in requiredParams){
+        if (this.config[requiredParams[i]] === undefined) {
+            throw new Error("Missing Babel config: "+requiredParams[i]);
+        }
+    }
+
+    if(!this.config.babel_host.match('^http')){
+        throw new Error('Invalid Babel config: babel_host');
+    }
 };
 
-BabelClient.prototype.targetFeeds = function(target, token, options, callback){
+/**
+ * Get a feed based off a target identifier. Return either a list of feed identifiers, or hydrate it and
+ * pass back the data as well.
+ * @param {string} target
+ * @param {string} token
+ * @param {object} options
+ * @param {function} callback
+ */
+BabelClient.prototype.getTargetFeed = function(target, token, options, callback){
+
+    if(!target){
+        throw new Error('Missing target');
+    }
+    if(!token){
+        throw new Error('Missing Persona token');
+    }
+
+    options = options || {};
 
     var requestOptions = {
         url: this.config.babel_host+':'+this.config.babel_port+'/feeds/targets/'+md5(target)+'/activity/annotations'+((options.hydrate && options.hydrate === true) ? '/hydrate' : ''),
@@ -32,7 +71,7 @@ BabelClient.prototype.targetFeeds = function(target, token, options, callback){
 
             if(jsonBody.error){
                 var babelError = new Error(jsonBody.error_description);
-                babelError.http_code = 404;
+                babelError.http_code = response.statusCode || 404;
                 callback(babelError);
             } else{
                 callback(null, jsonBody);
@@ -41,7 +80,19 @@ BabelClient.prototype.targetFeeds = function(target, token, options, callback){
     });
 };
 
-BabelClient.prototype.annotations = function(token, options, callback){
+/**
+ * Get annotations feed based off options passed in
+ * @param {string} token
+ * @param {object} options
+ * @param {function} callback
+ */
+BabelClient.prototype.getAnnotations = function(token, options, callback){
+
+    if(!token){
+        throw new Error('Missing Persona token');
+    }
+
+    options = options || {};
 
     var requestOptions = {
         url: this.config.babel_host+':'+this.config.babel_port+'/annotations?'+querystring.stringify(options),
@@ -61,7 +112,7 @@ BabelClient.prototype.annotations = function(token, options, callback){
 
             if(jsonBody.error){
                 var babelError = new Error(jsonBody.error_description);
-                babelError.http_code = 404;
+                babelError.http_code = response.statusCode || 404;
                 callback(babelError);
             } else{
                 callback(null, jsonBody);
@@ -71,13 +122,15 @@ BabelClient.prototype.annotations = function(token, options, callback){
 
 };
 
+
 /**
  * Log wrapping functions
  * @param severity ( debug or error )
  * @param message
  * @returns {boolean}
+ * @private
  */
-BabelClient.prototype.log = function (severity, message) {
+BabelClient.prototype._log = function (severity, message) {
     if (!this.config.enable_debug) {
         return true;
     }
@@ -96,10 +149,10 @@ BabelClient.prototype.log = function (severity, message) {
 };
 
 BabelClient.prototype.debug = function (message) {
-    this.log(DEBUG, message);
+    this._log(DEBUG, message);
 };
 BabelClient.prototype.error = function (message) {
-    this.log(ERROR, message);
+    this._log(ERROR, message);
 };
 
 /**

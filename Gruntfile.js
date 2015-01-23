@@ -58,4 +58,5 @@ module.exports = function (grunt) {
     grunt.registerTask('beautify', ['jsbeautifier:modify']);
     grunt.registerTask('clean', ['jshint', 'jsbeautifier:modify']);
     grunt.registerTask('verify', ['jshint', 'jsbeautifier:verify']);
+    grunt.registerTask('test', ['mochaTest']);
 };

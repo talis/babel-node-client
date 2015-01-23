@@ -27,6 +27,7 @@
     "grunt-mocha-test": "~0.7.0",
     "load-grunt-tasks": "^3.0.0",
     "mocha": "~1.14.0",
+    "rewire": "^2.1.4",
     "should": "~2.1.0"
   },
   "dependencies": {
