@@ -22,7 +22,7 @@ var babelClient = babel.createClient({
 ## Documentation
 
 To use any of the Babel client functions, you must have a Persona token. Read the [Persona docs](http://docs.talispersona.apiary.io/), or try
-out the [Persona node client](https://github.com/talis/persona-node-client).
+out the [Persona node client](https://github.com/talis/persona-node-client). You might also want to look at the [Babel docs](http://docs.talisbabel.apiary.io/) too.
 
 ### Target Feeds
 Get a feed based on a target
@@ -51,6 +51,15 @@ babelClient.getAnnotations(token, {}, function(error, results){
 ```
 
 If the token is invalid, the ```error``` object will have an http_code of 401.
+
+Create an annotation
+```javascript
+var token = req.personaClient.getToken(req);
+var data = {};
+babelClient.createAnnotations(token, data, function(error, results){
+    // do stuff
+});
+```
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).

@@ -130,6 +130,60 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
 
 };
 
+/**
+ * Create an annotation
+ *
+ * @param {string} token Persona token
+ * @param {object} data Data that can be passed into an annotation
+ * @callback callback
+ */
+BabelClient.prototype.createAnnotation = function(token, data, callback){
+
+    if(!token){
+        throw new Error('Missing Persona token');
+    }
+    if(!data.hasBody){
+        throw new Error('Missing data: hasBody');
+    }
+    if(!data.hasBody.format){
+        throw new Error('Missing data: hasBody.format');
+    }
+    if(!data.hasBody.type){
+        throw new Error('Missing data: hasBody.type');
+    }
+    if(!data.annotatedBy){
+        throw new Error('Missing data: annotatedBy');
+    }
+
+    var requestOptions = {
+        method:'POST',
+        body:data,
+        json:true,
+        url: this.config.babel_host+':'+this.config.babel_port+'/annotations',
+        headers: {
+            'Accept': 'application/json',
+            'Authorization':'Bearer '+token
+        }
+    };
+
+    this.debug(JSON.stringify(requestOptions));
+
+    request.post(requestOptions, function(err, response, body){
+        if(err){
+            callback(err);
+        } else{
+            var jsonBody = JSON.parse(body);
+            if(jsonBody.error){
+                var babelError = new Error(jsonBody.error_description);
+                babelError.http_code = response.statusCode || 404;
+                callback(babelError);
+            } else{
+                callback(null, jsonBody);
+            }
+        }
+    });
+};
+
 
 /**
  * Log wrapping functions
