@@ -130,6 +130,81 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
 
 };
 
+/**
+ * Create an annotation
+ *
+ * @param {string} token Persona token
+ * @param {object} data Data that can be passed into an annotation
+ * @param {object} data.hasbody
+ * @param {string} data.hasBody.format
+ * @param {string} data.hasBody.type
+ * @param {string} data.hasBody.chars
+ * @param {object} data.hasBody.details
+ * @param {string} data.hasBody.uri
+ * @param {string} data.hasBody.asReferencedBy
+ * @param {object} data.hasTarget
+ * @param {string} data.hasTarget.uri
+ * @param {string} data.hasTarget.fragment
+ * @param {string} data.hasTarget.asReferencedBy
+ * @param {string} data.annotatedBy
+ * @param {string} data.motiviatedBy
+ * @param {string} data.annotatedAt
+ *
+ * @callback callback
+ */
+BabelClient.prototype.createAnnotation = function(token, data, callback){
+
+    if(!token){
+        throw new Error('Missing Persona token');
+    }
+    if(!data.hasBody){
+        throw new Error('Missing data: hasBody');
+    }
+    if(!data.hasBody.format){
+        throw new Error('Missing data: hasBody.format');
+    }
+    if(!data.hasBody.type){
+        throw new Error('Missing data: hasBody.type');
+    }
+    if(!data.annotatedBy){
+        throw new Error('Missing data: annotatedBy');
+    }
+    if(!data.hasTarget){
+        throw new Error('Missing data: hasTarget');
+    }
+    if(!data.hasTarget.uri){
+        throw new Error('Missing data: hasTarget.uri');
+    }
+
+    var requestOptions = {
+        method:'POST',
+        body:data,
+        json:true,
+        url: this.config.babel_host+':'+this.config.babel_port+'/annotations',
+        headers: {
+            'Accept': 'application/json',
+            'Authorization':'Bearer '+token
+        }
+    };
+
+    this.debug(JSON.stringify(requestOptions));
+
+    request.post(requestOptions, function(err, response, body){
+        if(err){
+            callback(err);
+        } else{
+
+            if(body.message && body.errors){
+                var babelError = new Error(body.message);
+                babelError.http_code = response.statusCode || 404;
+                callback(babelError);
+            } else{
+                callback(null, body);
+            }
+        }
+    });
+};
+
 
 /**
  * Log wrapping functions
