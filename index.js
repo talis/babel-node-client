@@ -154,6 +154,12 @@ BabelClient.prototype.createAnnotation = function(token, data, callback){
     if(!data.annotatedBy){
         throw new Error('Missing data: annotatedBy');
     }
+    if(!data.hasTarget){
+        throw new Error('Missing data: hasTarget');
+    }
+    if(!data.hasTarget.uri){
+        throw new Error('Missing data: hasTarget.uri');
+    }
 
     var requestOptions = {
         method:'POST',

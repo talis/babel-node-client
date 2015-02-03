@@ -394,6 +394,32 @@ describe("Babel Node Client Test Suite", function(){
             createAnnotation.should.throw("Missing data: annotatedBy");
             done();
         });
+        it("- create annotation should return an error if hasTarget not supplied", function(done){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var createAnnotation = function(){
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            createAnnotation.should.throw("Missing data: hasTarget");
+            done();
+        });
+        it("- create annotation should return an error if hasTarget.uri not supplied", function(done){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var createAnnotation = function(){
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:{}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            createAnnotation.should.throw("Missing data: hasTarget.uri");
+            done();
+        });
         it("- create annotation should return an error (401) if persona token is invalid", function(done){
             var babel = rewire("../../index.js");
 
@@ -411,7 +437,7 @@ describe("Babel Node Client Test Suite", function(){
 
             babel.__set__("request", requestStub);
 
-            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
 
                 (err === null).should.be.false;
                 err.http_code.should.equal(401);
@@ -437,7 +463,7 @@ describe("Babel Node Client Test Suite", function(){
 
             babel.__set__("request", requestStub);
 
-            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
 
                 (err === null).should.be.false;
                 err.message.should.equal('Error communicating with Babel');
@@ -481,7 +507,7 @@ describe("Babel Node Client Test Suite", function(){
 
             babel.__set__("request", requestMock);
 
-            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
 
                 (err === null).should.be.true;
 
