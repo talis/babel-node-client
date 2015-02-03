@@ -66,7 +66,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
-0.2.0 - Added ability to create annotations.
+0.2.0 - Added ability to create annotations
+
 0.1.0 - Added the ability to request a target feed and annotations
 
 ## License
