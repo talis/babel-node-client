@@ -135,6 +135,21 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
  *
  * @param {string} token Persona token
  * @param {object} data Data that can be passed into an annotation
+ * @param {object} data.hasbody
+ * @param {string} data.hasBody.format
+ * @param {string} data.hasBody.type
+ * @param {string} data.hasBody.chars
+ * @param {object} data.hasBody.details
+ * @param {string} data.hasBody.uri
+ * @param {string} data.hasBody.asReferencedBy
+ * @param {object} data.hasTarget
+ * @param {string} data.hasTarget.uri
+ * @param {string} data.hasTarget.fragment
+ * @param {string} data.hasTarget.asReferencedBy
+ * @param {string} data.annotatedBy
+ * @param {string} data.motiviatedBy
+ * @param {string} data.annotatedAt
+ *
  * @callback callback
  */
 BabelClient.prototype.createAnnotation = function(token, data, callback){
