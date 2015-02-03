@@ -193,13 +193,13 @@ BabelClient.prototype.createAnnotation = function(token, data, callback){
         if(err){
             callback(err);
         } else{
-            var jsonBody = JSON.parse(body);
-            if(jsonBody.error){
-                var babelError = new Error(jsonBody.error_description);
+
+            if(body.message && body.errors){
+                var babelError = new Error(body.message);
                 babelError.http_code = response.statusCode || 404;
                 callback(babelError);
             } else{
-                callback(null, jsonBody);
+                callback(null, body);
             }
         }
     });

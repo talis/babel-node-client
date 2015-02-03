@@ -483,7 +483,7 @@ describe("Babel Node Client Test Suite", function(){
 
             var requestMock = {};
             requestMock.post = function(options, callback){
-                callback(null, {}, JSON.stringify({
+                callback(null, {}, {
                     __v: 0,
                     annotatedBy: 'Gordon Freeman',
                     _id: '12345678901234567890',
@@ -502,7 +502,7 @@ describe("Babel Node Client Test Suite", function(){
                             text: "Why don't we have a robot or something to push this sample into the core? This looks sort of dangerous."
                         }
                     }
-                }));
+                });
             };
 
             babel.__set__("request", requestMock);
