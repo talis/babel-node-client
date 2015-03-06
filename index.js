@@ -83,7 +83,7 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, callback)
 
 /***
  * Queries multiple feeds.
- *
+ * Given an array of feed ids it will return a merged hydrated feed.
  * @param {array} feeds an array of Feed Identifiers
  * @param {string} token Persona token
  * @param callback
