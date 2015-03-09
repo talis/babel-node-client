@@ -1,6 +1,7 @@
 'use strict';
 
-var request = require('request'),
+var _ = require('lodash'),
+    request = require('request'),
     md5 = require('MD5'),
     querystring = require('querystring');
 
@@ -74,6 +75,53 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, callback)
                 babelError.http_code = response.statusCode || 404;
                 callback(babelError);
             } else{
+                callback(null, jsonBody);
+            }
+        }
+    });
+};
+
+/***
+ * Queries multiple feeds.
+ * Given an array of feed ids it will return a merged hydrated feed.
+ * @param {array} feeds an array of Feed Identifiers
+ * @param {string} token Persona token
+ * @param callback
+ */
+BabelClient.prototype.getFeeds = function (feeds, token, callback) {
+    if (!feeds) {
+        throw new Error('Missing feeds');
+    }
+    if (!_.isArray(feeds) || _.isEmpty(feeds)) {
+        throw new Error("Feeds should be an array and must not be empty");
+    }
+    if (!token) {
+        throw new Error('Missing Persona token');
+    }
+
+    feeds = feeds.join(",");
+
+    var requestOptions = {
+        url: this.config.babel_host + ':' + this.config.babel_port + '/feeds/annotations/hydrate?feed_ids=' + encodeURIComponent(feeds),
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    };
+
+    this.debug(JSON.stringify(requestOptions));
+
+    request(requestOptions, function (err, response, body) {
+        if (err) {
+            callback(err);
+        } else {
+            var jsonBody = JSON.parse(body);
+
+            if (jsonBody.error) {
+                var babelError = new Error(jsonBody.error_description);
+                babelError.http_code = response.statusCode || 404;
+                callback(babelError);
+            } else {
                 callback(null, jsonBody);
             }
         }
