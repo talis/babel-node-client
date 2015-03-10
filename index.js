@@ -197,10 +197,16 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
  * @param {string} data.annotatedBy
  * @param {string} data.motiviatedBy
  * @param {string} data.annotatedAt
- *
- * @callback callback
+ * @param {object} options that control the request being made to babel.
+ * @param {boolean} options.headers['X-Ingest-Synchronously']
+ * @param callback
  */
-BabelClient.prototype.createAnnotation = function(token, data, callback){
+BabelClient.prototype.createAnnotation = function(token, data, options, callback){
+
+    if(_.isUndefined(callback) && _.isFunction(options)){
+        callback = options;
+        options = null;
+    }
 
     if(!token){
         throw new Error('Missing Persona token');
@@ -220,9 +226,27 @@ BabelClient.prototype.createAnnotation = function(token, data, callback){
     if(!data.hasTarget){
         throw new Error('Missing data: hasTarget');
     }
-    if(!data.hasTarget.uri){
-        throw new Error('Missing data: hasTarget.uri');
+
+    // validate the hasTarget property
+    var targets = [];
+    if (_.isArray(data.hasTarget)) {
+        targets = data.hasTarget;
+        if (targets.length===0) {
+            throw new Error("Missing data: hasTarget cannot be empty array");
+        }
+    } else {
+        targets.push(data.hasTarget);
     }
+    _.map(targets,function(target) {
+        if (!_.has(target,"uri")) {
+            throw new Error("Missing data: hasTarget.uri is required");
+        }
+        for (var prop in target) {
+            if (!(prop==="uri" || prop==="fragment" || prop==="asReferencedBy" )) {
+                throw new Error("Invalid data: hasTarget has unrecognised property '"+prop+"'");
+            }
+        }
+    });
 
     var requestOptions = {
         method:'POST',
@@ -234,6 +258,12 @@ BabelClient.prototype.createAnnotation = function(token, data, callback){
             'Authorization':'Bearer '+token
         }
     };
+
+    // if options.xIngestSynchronously set to true, then and only then add the header
+    // otherwise leave it out which defaults to false
+    if( options && _.has(options, 'headers') && _.has(options.headers,'X-Ingest-Synchronously') && options.headers['X-Ingest-Synchronously'] === true ) {
+        requestOptions.headers['X-Ingest-Synchronously'] = 'true';
+    }
 
     this.debug(JSON.stringify(requestOptions));
 
