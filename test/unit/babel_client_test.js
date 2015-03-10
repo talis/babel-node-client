@@ -717,5 +717,51 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
+
+        it("- create annotation when called with three parameters correctly treats the third as the callback", function(done){
+
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestMock = {};
+            requestMock.post = function(options, callback){
+                callback(null, {}, {
+                    __v: 0,
+                    annotatedBy: 'Gordon Freeman',
+                    _id: '12345678901234567890',
+                    annotatedAt: '2015-02-03T10:28:37.725Z',
+                    motivatedBy: 'The Combine',
+                    hasTarget: {
+                        uri: 'http://example.com/uri'
+                    },
+                    hasBody:{
+                        format: 'text/plain',
+                        type: 'Text',
+                        uri: 'http://example.com/another/uri',
+                        chars: "Eeeee it's dark! Where's that elevator? Eeeee!",
+                        details:{
+                            who: 'Gordon Freeman',
+                            text: "Why don't we have a robot or something to push this sample into the core? This looks sort of dangerous."
+                        }
+                    }
+                });
+            };
+
+            babel.__set__("request", requestMock);
+
+            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+
+                (err === null).should.be.true;
+
+                result.annotatedBy.should.equal('Gordon Freeman');
+                result.hasTarget.uri.should.equal('http://example.com/uri');
+                result.hasBody.uri.should.equal('http://example.com/another/uri');
+                done();
+            });
+        });
     });
 });
