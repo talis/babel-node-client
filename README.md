@@ -66,6 +66,12 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+0.3.1 - Fixes
+  * Now correctly validates hasTarget property when creating annotations. hasTarget can be a single object or an array of objects.
+  * createAnnotations now takes an optional third parameter called 'options'. You can use this to set X-Ingest-Synchronously header. If you leave this out of the call, it assumes the third parameter is the callback.
+
+0.3.0 - Added support for querying multiple feeds at once
+
 0.2.0 - Added ability to create annotations
 
 0.1.0 - Added the ability to request a target feed and annotations

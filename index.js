@@ -198,10 +198,15 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
  * @param {string} data.motiviatedBy
  * @param {string} data.annotatedAt
  * @param {object} options that control the request being made to babel.
- * @param {boolean} options.xIngestSynchronously
+ * @param {boolean} options.headers['X-Ingest-Synchronously']
  * @param callback
  */
 BabelClient.prototype.createAnnotation = function(token, data, options, callback){
+
+    if(_.isUndefined(callback) && _.isFunction(options)){
+        callback = options;
+        options = null;
+    }
 
     if(!token){
         throw new Error('Missing Persona token');
@@ -256,7 +261,7 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
 
     // if options.xIngestSynchronously set to true, then and only then add the header
     // otherwise leave it out which defaults to false
-    if(options && options.xIngestSynchronously && options.xIngestSynchronously === true ){
+    if( options && _.has(options, 'headers') && _.has(options.headers,'X-Ingest-Synchronously') && options.headers['X-Ingest-Synchronously'] === true ) {
         requestOptions.headers['X-Ingest-Synchronously'] = 'true';
     }
 

@@ -601,7 +601,20 @@ describe("Babel Node Client Test Suite", function(){
             });
 
             var createAnnotation = function(){
-                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:[{uri: 'foo', something:'else'}], annotatedBy:'Gordon Freeman'}, {}, function(err, result){});
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:{uri: 'foo', something:'else'}, annotatedBy:'Gordon Freeman'}, {}, function(err, result){});
+            };
+
+            createAnnotation.should.throw("Invalid data: hasTarget has unrecognised property 'something'");
+            done();
+        });
+        it("- create annotation should return an error if hasTarget as array contains one or more objects with unrecognised property", function(done){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var createAnnotation = function(){
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:[{uri: 'foo'},{uri: 'foo', something:'else'}], annotatedBy:'Gordon Freeman'}, function(err, result){});
             };
 
             createAnnotation.should.throw("Invalid data: hasTarget has unrecognised property 'something'");
