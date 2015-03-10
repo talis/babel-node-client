@@ -496,7 +496,7 @@ describe("Babel Node Client Test Suite", function(){
             });
 
             var createAnnotation = function(){
-                return babelClient.createAnnotation(null, null, function(err, result){});
+                return babelClient.createAnnotation(null, null, null, function(err, result){});
             };
 
             createAnnotation.should.throw("Missing Persona token");
@@ -509,7 +509,7 @@ describe("Babel Node Client Test Suite", function(){
             });
 
             var createAnnotation = function(){
-                return babelClient.createAnnotation('token', {}, function(err, result){});
+                return babelClient.createAnnotation('token', {}, {}, function(err, result){});
             };
 
             createAnnotation.should.throw("Missing data: hasBody");
@@ -522,7 +522,7 @@ describe("Babel Node Client Test Suite", function(){
             });
 
             var createAnnotation = function(){
-                return babelClient.createAnnotation('token', {hasBody:{}}, function(err, result){});
+                return babelClient.createAnnotation('token', {hasBody:{}}, {}, function(err, result){});
             };
 
             createAnnotation.should.throw("Missing data: hasBody.format");
@@ -536,7 +536,7 @@ describe("Babel Node Client Test Suite", function(){
             });
 
             var createAnnotation = function(){
-                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain'}}, function(err, result){});
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain'}}, {}, function(err, result){});
             };
 
             createAnnotation.should.throw("Missing data: hasBody.type");
@@ -549,7 +549,7 @@ describe("Babel Node Client Test Suite", function(){
             });
 
             var createAnnotation = function(){
-                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}}, function(err, result){});
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}}, {}, function(err, result){});
             };
 
             createAnnotation.should.throw("Missing data: annotatedBy");
@@ -562,23 +562,49 @@ describe("Babel Node Client Test Suite", function(){
             });
 
             var createAnnotation = function(){
-                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, annotatedBy:'Gordon Freeman'}, {}, function(err, result){});
             };
 
             createAnnotation.should.throw("Missing data: hasTarget");
             done();
         });
-        it("- create annotation should return an error if hasTarget.uri not supplied", function(done){
+        it("- create annotation should return an error if hasTarget as single object has no uri supplied", function(done){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
             });
 
             var createAnnotation = function(){
-                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:{}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:{}, annotatedBy:'Gordon Freeman'}, {}, function(err, result){});
             };
 
-            createAnnotation.should.throw("Missing data: hasTarget.uri");
+            createAnnotation.should.throw("Missing data: hasTarget.uri is required");
+            done();
+        });
+        it("- create annotation should return an error if hasTarget as array contains one or more objects with no uri", function(done){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var createAnnotation = function(){
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:[{uri: 'foo'}, {}], annotatedBy:'Gordon Freeman'}, {}, function(err, result){});
+            };
+
+            createAnnotation.should.throw("Missing data: hasTarget.uri is required");
+            done();
+        });
+        it("- create annotation should return an error if hasTarget contains unrecognised property", function(done){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var createAnnotation = function(){
+                return babelClient.createAnnotation('token', {hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:[{uri: 'foo', something:'else'}], annotatedBy:'Gordon Freeman'}, {}, function(err, result){});
+            };
+
+            createAnnotation.should.throw("Invalid data: hasTarget has unrecognised property 'something'");
             done();
         });
         it("- create annotation should return an error (401) if persona token is invalid", function(done){
@@ -598,7 +624,7 @@ describe("Babel Node Client Test Suite", function(){
 
             babel.__set__("request", requestStub);
 
-            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'},  {}, function(err, result){
 
                 (err === null).should.be.false;
                 err.http_code.should.equal(401);
@@ -624,7 +650,7 @@ describe("Babel Node Client Test Suite", function(){
 
             babel.__set__("request", requestStub);
 
-            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, {}, function(err, result){
 
                 (err === null).should.be.false;
                 err.message.should.equal('Error communicating with Babel');
@@ -668,7 +694,7 @@ describe("Babel Node Client Test Suite", function(){
 
             babel.__set__("request", requestMock);
 
-            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, {}, function(err, result){
 
                 (err === null).should.be.true;
 
