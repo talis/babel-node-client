@@ -206,6 +206,28 @@ describe("Babel Node Client Test Suite", function(){
             });
             done();
         });
+        it("should not blow up if invalid JSON returned", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestStub = function(options, callback){
+                callback(null, {}, null);
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.getTargetFeed('TARGET', 'secret', {}, function(err, result){
+
+              (err === null).should.be.false;
+              err.message.should.equal('Error parsing JSON: null');
+              (typeof result).should.equal('undefined');
+            });
+            done();
+        });
     });
 
     describe("- Test Querying Multiple Feeds", function(){
@@ -367,6 +389,28 @@ describe("Babel Node Client Test Suite", function(){
             });
             done();
         });
+        it("should not blow up if invalid JSON returned", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestStub = function(options, callback){
+                callback(null, {}, null);
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.getFeeds(['FEED1', ['FEED2']], 'secret', function(err, result){
+
+                (err === null).should.be.false;
+                err.message.should.equal('Error parsing JSON: null');
+                (typeof result).should.equal('undefined');
+            });
+            done();
+        });
     });
 
     describe("- Get Annotations Feed tests", function(){
@@ -483,6 +527,28 @@ describe("Babel Node Client Test Suite", function(){
                 result.count.should.equal(2);
                 result.limit.should.equal(25);
                 result.annotations.should.have.lengthOf(2);
+            });
+            done();
+        });
+        it("should not blow up if invalid JSON returned", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestStub = function(options, callback){
+               callback(null, {}, null);
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.getAnnotations('secret', {}, function(err, result){
+
+                (err === null).should.be.false;
+                err.message.should.equal('Error parsing JSON: null');
+                (typeof result).should.equal('undefined');
             });
             done();
         });

@@ -52,6 +52,8 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, callback)
         throw new Error('Missing Persona token');
     }
 
+    var self = this;
+
     hydrate = hydrate || false;
 
     var requestOptions = {
@@ -68,15 +70,7 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, callback)
         if(err){
             callback(err);
         } else{
-            var jsonBody = JSON.parse(body);
-
-            if(jsonBody.error){
-                var babelError = new Error(jsonBody.error_description);
-                babelError.http_code = response.statusCode || 404;
-                callback(babelError);
-            } else{
-                callback(null, jsonBody);
-            }
+            self._parseJSON(response, body, callback);
         }
     });
 };
@@ -99,6 +93,8 @@ BabelClient.prototype.getFeeds = function (feeds, token, callback) {
         throw new Error('Missing Persona token');
     }
 
+    var self = this;
+
     feeds = feeds.join(",");
 
     var requestOptions = {
@@ -115,15 +111,7 @@ BabelClient.prototype.getFeeds = function (feeds, token, callback) {
         if (err) {
             callback(err);
         } else {
-            var jsonBody = JSON.parse(body);
-
-            if (jsonBody.error) {
-                var babelError = new Error(jsonBody.error_description);
-                babelError.http_code = response.statusCode || 404;
-                callback(babelError);
-            } else {
-                callback(null, jsonBody);
-            }
+            self._parseJSON(response, body, callback);
         }
     });
 };
@@ -148,6 +136,8 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
         throw new Error('Missing Persona token');
     }
 
+    var self = this;
+
     querystringMap = querystringMap || {};
 
     var requestOptions = {
@@ -164,15 +154,7 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
         if(err){
             callback(err);
         } else{
-            var jsonBody = JSON.parse(body);
-
-            if(jsonBody.error){
-                var babelError = new Error(jsonBody.error_description);
-                babelError.http_code = response.statusCode || 404;
-                callback(babelError);
-            } else{
-                callback(null, jsonBody);
-            }
+            self._parseJSON(response, body, callback);
         }
     });
 
@@ -283,6 +265,29 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
     });
 };
 
+/**
+ * Parse JSON safely
+ * @param {object} response
+ * @param {object} body
+ * @callback callback
+ * @private
+ */
+BabelClient.prototype._parseJSON = function(response, body, callback){
+    try{
+        var jsonBody = JSON.parse(body);
+
+        if(jsonBody.error){
+            var babelError = new Error(jsonBody.error_description);
+            babelError.http_code = response.statusCode || 404;
+            callback(babelError);
+        } else{
+            callback(null, jsonBody);
+        }
+    } catch(e){
+        var babelError = new Error("Error parsing JSON: "+body);
+        callback(babelError);
+    }
+};
 
 /**
  * Log wrapping functions
