@@ -6,7 +6,7 @@ Node Client for Babel
 ## Getting Started
 Install the module:
 
-```npm install node_client@git://github.com/talis/babel-node-client.git#0.1.0 --save```
+```npm install node_client@git://github.com/talis/babel-node-client.git#0.3.2 --save```
 
 Create a babel client as follows:
 
@@ -65,6 +65,8 @@ babelClient.createAnnotations(token, data, function(error, results){
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+
+0.3.2 - Safely parses JSON responses. Fixes #5.
 
 0.3.1 - Fixes
   * Now correctly validates hasTarget property when creating annotations. hasTarget can be a single object or an array of objects.
