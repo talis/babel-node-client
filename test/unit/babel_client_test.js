@@ -46,6 +46,137 @@ describe("Babel Node Client Test Suite", function(){
         });
     });
 
+    describe("- Head Target Feed tests", function(){
+        it("should throw error if no target supplied", function(done){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var headTargetFeed = function(){
+                return babelClient.headTargetFeed(null, null, null, function(err, response){});
+            };
+
+            headTargetFeed.should.throw("Missing target");
+            done();
+        });
+        it("should throw error if no persona token supplied", function(done){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var headTargetFeed = function(){
+                return babelClient.headTargetFeed('TARGET', null, null, function(err, response){});
+            };
+
+            headTargetFeed.should.throw("Missing Persona token");
+            done();
+        });
+
+        it("head target feed should return an error if call to request returns an error", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = function(options, callback){
+                callback(new Error('Error communicating with Babel'));
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.headTargetFeed('TARGET', 'secret', {}, function(err, response){
+
+                (err === null).should.be.false;
+                err.message.should.equal('Error communicating with Babel');
+                (typeof result).should.equal('undefined');
+            });
+            done();
+        });
+        it("head target feed should return an error (401) if persona token is invalid", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = function(options, callback){
+                callback(null, {statusCode:401});
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.headTargetFeed('TARGET', 'secret', {}, function(err, response){
+
+                (err === null).should.be.false;
+                err.http_code.should.equal(401);
+                (typeof result).should.equal('undefined');
+            });
+            done();
+        });
+        it("head target feed should return an error (404) if babel returns no feed", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = function(options, callback){
+                callback(null, {statusCode:404});
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.headTargetFeed('TARGET', 'secret', {}, function(err, response){
+                (err === null).should.be.false;
+                err.http_code.should.equal(404);
+                (typeof result).should.equal('undefined');
+            });
+            done();
+        });
+        it("head target feed should not return an error if no params set and response from babel is ok", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestStub = function(options, callback){
+                callback(null, {statusCode:204, headers:{'x-feed-new-items': '1'}});
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.headTargetFeed('TARGET', 'secret', function(err, response){
+                (err === null).should.be.true;
+                response.headers.should.have.property('x-feed-new-items', '1');
+            });
+            done();
+        });
+        it("head target feed should return response if no error from babel and feed is found with empty params", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestStub = function(options, callback){
+                callback(null, {statusCode:204, headers:{'x-feed-new-items': '2'}});
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.headTargetFeed('TARGET', 'secret', {}, function(err, response){
+                (err === null).should.be.true;
+                response.headers.should.have.property('x-feed-new-items', '2');
+            });
+            done();
+        });
+    });
     describe("- Get Target Feed tests", function(){
 
         it("should throw error if no target supplied", function(done){
@@ -828,6 +959,65 @@ describe("Babel Node Client Test Suite", function(){
                 result.hasBody.uri.should.equal('http://example.com/another/uri');
                 done();
             });
+        });
+    });
+
+    describe("- Test generation of query string params", function(){
+        it("should return empty string if no params passed in", function(done){
+          var babel = require("../../index.js");
+
+          var babelClient = babel.createClient({
+            babel_host:"http://babel",
+            babel_port:3000
+          });
+
+          babelClient._queryStringParams().should.equal('');
+          done();
+        });
+        it("should return empty string if params not an object", function(done){
+          var babel = require("../../index.js");
+
+          var babelClient = babel.createClient({
+            babel_host:"http://babel",
+            babel_port:3000
+          });
+
+          babelClient._queryStringParams('').should.equal('');
+          done();
+        });
+        it("should return string with one key value pair", function(done){
+          var babel = require("../../index.js");
+
+          var babelClient = babel.createClient({
+            babel_host:"http://babel",
+            babel_port:3000
+          });
+
+          babelClient._queryStringParams({testk1:'testv1'}).should.equal('testk1=testv1');
+          done();
+        });
+        it("should return string with one key value pair with url encoded strings", function(done){
+            var babel = require("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            babelClient._queryStringParams({testk1:'testv1=encoded'}).should.equal('testk1=testv1%3Dencoded');
+            done();
+        });
+
+        it("should return string with multiple key value pairs", function(done){
+          var babel = require("../../index.js");
+
+          var babelClient = babel.createClient({
+            babel_host:"http://babel",
+            babel_port:3000
+          });
+
+          babelClient._queryStringParams({testk1:'testv1',testk2:'testv2',testk3:'testv3'}).should.equal('testk1=testv1&testk2=testv2&testk3=testv3');
+          done();
         });
     });
 });

@@ -25,12 +25,31 @@ To use any of the Babel client functions, you must have a Persona token. Read th
 out the [Persona node client](https://github.com/talis/persona-node-client). You might also want to look at the [Babel docs](http://docs.talisbabel.apiary.io/) too.
 
 ### Target Feeds
-Get a feed based on a target
+Make a HEAD request to see if any annotations have been added to a feed
 ```javascript
 var target = 'stay-on-target';
 var token = req.personaClient.getToken(req);
-babelClient.getTargetFeed(target, token, {}, function(error, results){
+babelClient.headTargetFeed(target, token, {delta_token:1}, function(error, response){
     // do stuff
+    var newItemsFound = response.headers['x-feed-new-items'];
+    // newItemsFound will now show you how many annotations have been added since the annotation with a delta_token equal to 1.
+});
+```
+
+Get a feed based on a target. Now supports passing through of `offset`, `limit` and `delta_token` in params.
+```javascript
+var target = 'stay-on-target';
+var token = req.personaClient.getToken(req);
+var hydrate = true;
+var params = {
+    delta_token:'123'
+};
+babelClient.getTargetFeed(target, token, hydrate, params, function(error, results){
+    // do stuff
+    var annotations = results.annotations;
+    var delta_token = results.delta_token;
+    // Depending on what you specify 'hydate' to be, annotations will be either an array of annotation IDs, or an
+    // array of annotation objects.
 });
 ```
 
@@ -61,10 +80,17 @@ babelClient.createAnnotations(token, data, function(error, results){
 });
 ```
 
+### Tests
+```bash
+$ grunt test
+```
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+
+0.3.3 - Adds support for passing in params to a feed. Adds support for making a HEAD request to a feed to see if there are any annotations added.
 
 0.3.2 - Safely parses JSON responses. Fixes #5.
 
