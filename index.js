@@ -35,15 +35,15 @@ var BabelClient = function (config) {
 };
 
 /**
- * Get a feed based off a target identifier. Return either a list of feed identifiers, or hydrate it and
- * pass back the data as well
- *
- * @param {string} target Feed target identifier
- * @param {string} token Persona token
- * @param {boolean} hydrate Gets a fully hydrated feed, i.e. actually contains the posts
+ * Make a HEAD request to check for new annotations
+ * @param {string} target
+ * @param {string} token
+ * @param {object} params
+ * @param {string} params.delta_token Using a delta_token tells you if there have been new annotations since another one
  * @callback callback
+ * @throws Error
  */
-BabelClient.prototype.getTargetFeed = function(target, token, hydrate, callback){
+BabelClient.prototype.headTargetFeed = function(target, token, params, callback){
 
     if(!target){
         throw new Error('Missing target');
@@ -52,12 +52,76 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, callback)
         throw new Error('Missing Persona token');
     }
 
+    // params are optional
+    if(typeof params === "function"){
+        callback = params;
+        params = {};
+    }
+
+    // Build up a query string
+    var queryString = this._queryStringParams(params);
+
+    var requestOptions = {
+        method: "HEAD",
+        url: this.config.babel_host+':'+this.config.babel_port+
+          '/feeds/targets/'+md5(target)+'/activity/annotations' + (!_.isEmpty(queryString) ? '?'+queryString : ''),
+        headers: {
+            'Accept': 'application/json',
+            'Authorization':'Bearer '+token
+        }
+    };
+
+    this.debug(JSON.stringify(requestOptions));
+
+    request(requestOptions, function(err, response){
+        if(err){
+            callback(err);
+        } else if(response.statusCode && response.statusCode !== 204){
+            var babelError = new Error();
+            babelError.http_code = response.statusCode || 404;
+            callback(babelError);
+        } else{
+            callback(null, response);
+        }
+    });
+};
+
+/**
+ * Get a feed based off a target identifier. Return either a list of feed identifiers, or hydrate it and
+ * pass back the data as well
+ *
+ * @param {string} target Feed target identifier
+ * @param {string} token Persona token
+ * @param {boolean} hydrate Gets a fully hydrated feed, i.e. actually contains the posts
+ * @param {object} params Query params to pass into the call to Babel
+ * @callback callback
+ * @throws Error
+ */
+BabelClient.prototype.getTargetFeed = function(target, token, hydrate, params, callback){
+
+    if(!target){
+        throw new Error('Missing target');
+    }
+    if(!token){
+        throw new Error('Missing Persona token');
+    }
+
+    // params are optional
+    if(typeof params === "function"){
+        callback = params;
+        params = {};
+    }
+
     var self = this;
 
     hydrate = hydrate || false;
 
+    // Build up a query string
+    var queryString = this._queryStringParams(params);
+
     var requestOptions = {
-        url: this.config.babel_host+':'+this.config.babel_port+'/feeds/targets/'+md5(target)+'/activity/annotations'+((hydrate === true) ? '/hydrate' : ''),
+        url: this.config.babel_host+':'+this.config.babel_port+
+          '/feeds/targets/'+md5(target)+'/activity/annotations'+((hydrate === true) ? '/hydrate' : '') + (!_.isEmpty(queryString) ? '?'+queryString : ''),
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token
@@ -263,6 +327,27 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
             }
         }
     });
+};
+
+/**
+ * Build up a query string
+ * @param {object} params
+ * @returns {string}
+ * @private
+ */
+BabelClient.prototype._queryStringParams = function(params){
+    var queryString = '',
+        queryStringParams = [];
+
+    if(!_.isEmpty(params)){
+        for(var i in params){
+            if(params.hasOwnProperty(i)){
+               queryStringParams.push(encodeURIComponent(i)+'='+encodeURIComponent(params[i]));
+            }
+        }
+        queryString += queryStringParams.join('&');
+    }
+    return queryString;
 };
 
 /**
