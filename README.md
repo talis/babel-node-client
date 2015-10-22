@@ -6,7 +6,7 @@ Node Client for Babel
 ## Getting Started
 Install the module:
 
-```npm install node_client@git://github.com/talis/babel-node-client.git#0.3.2 --save```
+```npm install node_client@git://github.com/talis/babel-node-client.git#0.3.4 --save```
 
 Create a babel client as follows:
 
@@ -89,6 +89,8 @@ $ grunt test
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+
+0.3.4 - Adds the ability to fetch an individual annotation
 
 0.3.3 - Adds support for passing in params to a feed. Adds support for making a HEAD request to a feed to see if there are any annotations added.
 

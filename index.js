@@ -181,6 +181,43 @@ BabelClient.prototype.getFeeds = function (feeds, token, callback) {
 };
 
 /**
+ * Get a single annotation identified by the id parameter.
+ *
+ * @param {string} token Persona token
+ * @param {string} id annotation ID
+ * @callback callback
+ */
+BabelClient.prototype.getAnnotation = function(token, id, callback) {
+    if(!token){
+        throw new Error('Missing Persona token');
+    }
+
+    if(!id) {
+        throw new Error('Missing annotation ID');
+    }
+
+    var self = this;
+
+    var requestOptions = {
+        url: this.config.babel_host+':'+this.config.babel_port+'/annotations/'+id,
+        headers: {
+            'Accept': 'application/json',
+            'Authorization':'Bearer '+token
+        }
+    };
+
+    this.debug(JSON.stringify(requestOptions));
+
+    request(requestOptions, function(err, response, body){
+        if(err){
+            callback(err);
+        } else{
+            self._parseJSON(response, body, callback);
+        }
+    });
+};
+
+/**
  * Get annotations feed based off options passed in
  *
  * @param {string} token Persona token
