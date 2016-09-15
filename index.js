@@ -67,7 +67,8 @@ BabelClient.prototype.headTargetFeed = function(target, token, params, callback)
           '/feeds/targets/'+md5(target)+'/activity/annotations' + (!_.isEmpty(queryString) ? '?'+queryString : ''),
         headers: {
             'Accept': 'application/json',
-            'Authorization':'Bearer '+token
+            'Authorization':'Bearer '+token,
+            'Host': 'babel'
         }
     };
 
@@ -124,7 +125,8 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, params, c
           '/feeds/targets/'+md5(target)+'/activity/annotations'+((hydrate === true) ? '/hydrate' : '') + (!_.isEmpty(queryString) ? '?'+queryString : ''),
         headers: {
             'Accept': 'application/json',
-            'Authorization':'Bearer '+token
+            'Authorization':'Bearer '+token,
+            'Host': 'babel'
         }
     };
 
@@ -165,7 +167,8 @@ BabelClient.prototype.getFeeds = function (feeds, token, callback) {
         url: this.config.babel_host + ':' + this.config.babel_port + '/feeds/annotations/hydrate?feed_ids=' + encodeURIComponent(feeds),
         headers: {
             'Accept': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Authorization': 'Bearer ' + token,
+            'Host': 'babel'
         }
     };
 
@@ -202,7 +205,8 @@ BabelClient.prototype.getAnnotation = function(token, id, callback) {
         url: this.config.babel_host+':'+this.config.babel_port+'/annotations/'+id,
         headers: {
             'Accept': 'application/json',
-            'Authorization':'Bearer '+token
+            'Authorization':'Bearer '+token,
+            'Host': 'babel'
         }
     };
 
@@ -245,7 +249,8 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
         url: this.config.babel_host+':'+this.config.babel_port+'/annotations?'+querystring.stringify(querystringMap),
         headers: {
             'Accept': 'application/json',
-            'Authorization':'Bearer '+token
+            'Authorization':'Bearer '+token,
+            'Host': 'babel'
         }
     };
 
@@ -338,7 +343,8 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
         url: this.config.babel_host+':'+this.config.babel_port+'/annotations',
         headers: {
             'Accept': 'application/json',
-            'Authorization':'Bearer '+token
+            'Authorization':'Bearer '+token,
+            'Host': 'babel'
         }
     };
 
