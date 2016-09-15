@@ -206,7 +206,7 @@ BabelClient.prototype.getAnnotation = function(token, id, callback) {
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': 'babel'
+            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
         }
     };
 
