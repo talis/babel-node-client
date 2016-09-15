@@ -68,7 +68,7 @@ BabelClient.prototype.headTargetFeed = function(target, token, params, callback)
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': 'babel'
+            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
         }
     };
 
@@ -126,7 +126,7 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, params, c
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': 'babel'
+            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
         }
     };
 
@@ -168,7 +168,7 @@ BabelClient.prototype.getFeeds = function (feeds, token, callback) {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + token,
-            'Host': 'babel'
+            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
         }
     };
 
@@ -250,7 +250,7 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': 'babel'
+            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
         }
     };
 
@@ -344,7 +344,7 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': 'babel'
+            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
         }
     };
 
