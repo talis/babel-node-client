@@ -32,6 +32,8 @@ var BabelClient = function (config) {
     if(!this.config.babel_host.match('^http')){
         throw new Error('Invalid Babel config: babel_host');
     }
+
+    this.config.babel_hostname = this.config.babel_host.split('://', 2)[1];
 };
 
 /**
@@ -68,7 +70,7 @@ BabelClient.prototype.headTargetFeed = function(target, token, params, callback)
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
+            'Host': this.config.babel_hostname
         }
     };
 
@@ -126,7 +128,7 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, params, c
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
+            'Host': this.config.babel_hostname
         }
     };
 
@@ -168,7 +170,7 @@ BabelClient.prototype.getFeeds = function (feeds, token, callback) {
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + token,
-            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
+            'Host': this.config.babel_hostname
         }
     };
 
@@ -206,7 +208,7 @@ BabelClient.prototype.getAnnotation = function(token, id, callback) {
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
+            'Host': this.config.babel_hostname
         }
     };
 
@@ -250,7 +252,7 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
+            'Host': this.config.babel_hostname
         }
     };
 
@@ -344,7 +346,7 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
-            'Host': this.config.babel_host.replace(/^(https?:|)\/\//, '')
+            'Host': this.config.babel_hostname
         }
     };
 
