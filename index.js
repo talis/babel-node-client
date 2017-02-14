@@ -375,6 +375,148 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
 };
 
 /**
+ * Update an annotation
+ *
+ * @param {string} token Persona token
+ * @param {object} data Data that can be passed into an annotation
+ * @param {object} data._id
+ * @param {object} data.hasbody
+ * @param {string} data.hasBody.format
+ * @param {string} data.hasBody.type
+ * @param {string} data.hasBody.chars
+ * @param {object} data.hasBody.details
+ * @param {string} data.hasBody.uri
+ * @param {string} data.hasBody.asReferencedBy
+ * @param {object} data.hasTarget
+ * @param {string} data.hasTarget.uri
+ * @param {string} data.hasTarget.fragment
+ * @param {string} data.hasTarget.asReferencedBy
+ * @param {string} data.annotatedBy
+ * @param {string} data.motiviatedBy
+ * @param {string} data.annotatedAt
+ * @param callback
+ */
+BabelClient.prototype.updateAnnotation = function(token, data, callback){
+
+    if(!token){
+        throw new Error('Missing Persona token');
+    }
+    if(!data._id){
+        throw new Error('Missing data: _id');
+    }
+    if(!data.hasBody){
+        throw new Error('Missing data: hasBody');
+    }
+    if(!data.hasBody.format){
+        throw new Error('Missing data: hasBody.format');
+    }
+    if(!data.hasBody.type){
+        throw new Error('Missing data: hasBody.type');
+    }
+    if(!data.annotatedBy){
+        throw new Error('Missing data: annotatedBy');
+    }
+    if(!data.hasTarget){
+        throw new Error('Missing data: hasTarget');
+    }
+
+    // validate the hasTarget property
+    var targets = [];
+    if (_.isArray(data.hasTarget)) {
+        targets = data.hasTarget;
+        if (targets.length===0) {
+            throw new Error("Missing data: hasTarget cannot be empty array");
+        }
+    } else {
+        targets.push(data.hasTarget);
+    }
+    _.map(targets,function(target) {
+        if (!_.has(target,"uri")) {
+            throw new Error("Missing data: hasTarget.uri is required");
+        }
+        for (var prop in target) {
+            if (!(prop==="uri" || prop==="fragment" || prop==="asReferencedBy" )) {
+                throw new Error("Invalid data: hasTarget has unrecognised property '"+prop+"'");
+            }
+        }
+    });
+
+    var requestOptions = {
+        method: 'PUT',
+        body: data,
+        json: true,
+        url: this.config.babel_host + ':' + this.config.babel_port + '/annotations/' + data._id,
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + token,
+            'Host': this.config.babel_hostname
+        }
+    };
+
+    this.debug(JSON.stringify(requestOptions));
+
+    request.put(requestOptions, function(err, response, body){
+        if(err){
+            callback(err);
+        } else{
+
+            if(body.message && body.errors){
+                var babelError = new Error(body.message);
+                babelError.http_code = response.statusCode || 404;
+                callback(babelError);
+            } else{
+                callback(null, body);
+            }
+        }
+    });
+};
+
+/**
+ * Delete an annotation by its id
+ *
+ * @param {string} token Persona token
+ * @param {object} annotationId Annotation id to delete
+ * @param callback
+ */
+BabelClient.prototype.deleteAnnotation = function(token, annotationId, callback){
+
+    if(!token){
+        throw new Error('Missing Persona token');
+    }
+    if(!annotationId){
+        throw new Error('Missing annotationId');
+    }
+
+    var requestOptions = {
+        method: 'DELETE',
+        json: true,
+        url: this.config.babel_host + ':' + this.config.babel_port + '/annotations/' + annotationId,
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + token,
+            'Host': this.config.babel_hostname
+        }
+    };
+
+    this.debug(JSON.stringify(requestOptions));
+
+    request.delete(requestOptions, function(err, response, body){
+        if(err){
+            callback(err);
+        } else{
+
+            if(body.message && body.errors){
+                var babelError = new Error(body.message);
+                babelError.http_code = response.statusCode || 404;
+                callback(babelError);
+            } else{
+                callback(null, body);
+            }
+        }
+    });
+};
+
+/**
  * Build up a query string
  * @param {object} params
  * @returns {string}
