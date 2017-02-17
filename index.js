@@ -17,7 +17,7 @@ var ERROR = "error";
  * @param {string} config.babel_port Babel port
  * @constructor
  */
-var BabelClient = function (config) {
+var BabelClient = function babelClient(config) {
 
     this.config = config || {};
 
@@ -45,7 +45,7 @@ var BabelClient = function (config) {
  * @callback callback
  * @throws Error
  */
-BabelClient.prototype.headTargetFeed = function(target, token, params, callback){
+BabelClient.prototype.headTargetFeed = function headTargetFeed(target, token, params, callback){
 
     if(!target){
         throw new Error('Missing target');
@@ -76,7 +76,7 @@ BabelClient.prototype.headTargetFeed = function(target, token, params, callback)
 
     this.debug(JSON.stringify(requestOptions));
 
-    request(requestOptions, function(err, response){
+    request(requestOptions, function requestResponse(err, response){
         if(err){
             callback(err);
         } else if(response.statusCode && response.statusCode !== 204){
@@ -100,7 +100,7 @@ BabelClient.prototype.headTargetFeed = function(target, token, params, callback)
  * @callback callback
  * @throws Error
  */
-BabelClient.prototype.getTargetFeed = function(target, token, hydrate, params, callback){
+BabelClient.prototype.getTargetFeed = function getTargetFeed(target, token, hydrate, params, callback){
 
     if(!target){
         throw new Error('Missing target');
@@ -134,7 +134,7 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, params, c
 
     this.debug(JSON.stringify(requestOptions));
 
-    request(requestOptions, function(err, response, body){
+    request(requestOptions, function requestResponse(err, response, body){
         if(err){
             callback(err);
         } else{
@@ -150,7 +150,7 @@ BabelClient.prototype.getTargetFeed = function(target, token, hydrate, params, c
  * @param {string} token Persona token
  * @param callback
  */
-BabelClient.prototype.getFeeds = function (feeds, token, callback) {
+BabelClient.prototype.getFeeds = function getFeeds(feeds, token, callback) {
     if (!feeds) {
         throw new Error('Missing feeds');
     }
@@ -176,7 +176,7 @@ BabelClient.prototype.getFeeds = function (feeds, token, callback) {
 
     this.debug(JSON.stringify(requestOptions));
 
-    request(requestOptions, function (err, response, body) {
+    request(requestOptions, function requesResponse(err, response, body) {
         if (err) {
             callback(err);
         } else {
@@ -192,7 +192,7 @@ BabelClient.prototype.getFeeds = function (feeds, token, callback) {
  * @param {string} id annotation ID
  * @callback callback
  */
-BabelClient.prototype.getAnnotation = function(token, id, callback) {
+BabelClient.prototype.getAnnotation = function getAnnotation(token, id, callback) {
     if(!token){
         throw new Error('Missing Persona token');
     }
@@ -214,7 +214,7 @@ BabelClient.prototype.getAnnotation = function(token, id, callback) {
 
     this.debug(JSON.stringify(requestOptions));
 
-    request(requestOptions, function(err, response, body){
+    request(requestOptions, function requestResponse(err, response, body){
         if(err){
             callback(err);
         } else{
@@ -237,7 +237,7 @@ BabelClient.prototype.getAnnotation = function(token, id, callback) {
  * @param {string} querystringMap.offset Offset start of results
  * @callback callback
  */
-BabelClient.prototype.getAnnotations = function(token, querystringMap, callback){
+BabelClient.prototype.getAnnotations = function getAnnotations(token, querystringMap, callback){
 
     if(!token){
         throw new Error('Missing Persona token');
@@ -258,7 +258,7 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
 
     this.debug(JSON.stringify(requestOptions));
 
-    request(requestOptions, function(err, response, body){
+    request(requestOptions, function requestResponse(err, response, body){
         if(err){
             callback(err);
         } else{
@@ -291,7 +291,7 @@ BabelClient.prototype.getAnnotations = function(token, querystringMap, callback)
  * @param {boolean} options.headers['X-Ingest-Synchronously']
  * @param callback
  */
-BabelClient.prototype.createAnnotation = function(token, data, options, callback){
+BabelClient.prototype.createAnnotation = function createAnnotation(token, data, options, callback){
 
     if(_.isUndefined(callback) && _.isFunction(options)){
         callback = options;
@@ -327,13 +327,15 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
     } else {
         targets.push(data.hasTarget);
     }
-    _.map(targets,function(target) {
+    _.map(targets, function mapTargets(target) {
         if (!_.has(target,"uri")) {
             throw new Error("Missing data: hasTarget.uri is required");
         }
         for (var prop in target) {
-            if (!(prop==="uri" || prop==="fragment" || prop==="asReferencedBy" )) {
-                throw new Error("Invalid data: hasTarget has unrecognised property '"+prop+"'");
+            if(target.hasOwnProperty(prop)){
+                if (!(prop==="uri" || prop==="fragment" || prop==="asReferencedBy" )) {
+                    throw new Error("Invalid data: hasTarget has unrecognised property '"+prop+"'");
+                }
             }
         }
     });
@@ -358,11 +360,10 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
 
     this.debug(JSON.stringify(requestOptions));
 
-    request.post(requestOptions, function(err, response, body){
+    request.post(requestOptions, function requestResponse(err, response, body){
         if(err){
             callback(err);
         } else{
-
             if(body.message && body.errors){
                 var babelError = new Error(body.message);
                 babelError.http_code = response.statusCode || 404;
@@ -396,7 +397,7 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
  * @param {string} data.annotatedAt
  * @param callback
  */
-BabelClient.prototype.updateAnnotation = function(token, data, callback){
+BabelClient.prototype.updateAnnotation = function updateAnnotation(token, data, callback){
     if (!token) {
         throw new Error('Missing Persona token');
     }
@@ -429,13 +430,15 @@ BabelClient.prototype.updateAnnotation = function(token, data, callback){
     } else {
         targets.push(data.hasTarget);
     }
-    _.map(targets,function(target) {
+    _.map(targets, function mapTargets(target) {
         if (!_.has(target, 'uri')) {
             throw new Error('Missing data: hasTarget.uri is required');
         }
         for (var prop in target) {
-            if (!(prop === 'uri' || prop === 'fragment' || prop === 'asReferencedBy' )) {
-                throw new Error('Invalid data: hasTarget has unrecognised property \'' + prop + '\'');
+            if(target.hasOwnProperty(prop)){
+                if (!(prop === 'uri' || prop === 'fragment' || prop === 'asReferencedBy' )) {
+                    throw new Error('Invalid data: hasTarget has unrecognised property \'' + prop + '\'');
+                }
             }
         }
     });
@@ -454,7 +457,7 @@ BabelClient.prototype.updateAnnotation = function(token, data, callback){
 
     this.debug(JSON.stringify(requestOptions));
 
-    request.put(requestOptions, function(err, response, body){
+    request.put(requestOptions, function requestResponse(err, response, body){
         if (err) {
             callback(err);
         } else {
@@ -476,7 +479,7 @@ BabelClient.prototype.updateAnnotation = function(token, data, callback){
  * @param {object} annotationId Annotation id to delete
  * @param callback
  */
-BabelClient.prototype.deleteAnnotation = function(token, annotationId, callback){
+BabelClient.prototype.deleteAnnotation = function deleteAnnotation(token, annotationId, callback){
     if (!token) {
         throw new Error('Missing Persona token');
     }
@@ -497,7 +500,7 @@ BabelClient.prototype.deleteAnnotation = function(token, annotationId, callback)
 
     this.debug(JSON.stringify(requestOptions));
 
-    request.delete(requestOptions, function(err, response, body){
+    request.delete(requestOptions, function requestResponse(err, response, body){
         if (err) {
             callback(err);
         } else {
@@ -518,14 +521,14 @@ BabelClient.prototype.deleteAnnotation = function(token, annotationId, callback)
  * @returns {string}
  * @private
  */
-BabelClient.prototype._queryStringParams = function(params){
+BabelClient.prototype._queryStringParams = function queryStringParams(params){
     var queryString = '',
         queryStringParams = [];
 
     if(!_.isEmpty(params)){
-        for(var i in params){
-            if(params.hasOwnProperty(i)){
-               queryStringParams.push(encodeURIComponent(i)+'='+encodeURIComponent(params[i]));
+        for(var param in params){
+            if(params.hasOwnProperty(param)){
+               queryStringParams.push(encodeURIComponent(param)+'='+encodeURIComponent(params[param]));
             }
         }
         queryString += queryStringParams.join('&');
@@ -540,7 +543,7 @@ BabelClient.prototype._queryStringParams = function(params){
  * @callback callback
  * @private
  */
-BabelClient.prototype._parseJSON = function(response, body, callback){
+BabelClient.prototype._parseJSON = function parseJSON(response, body, callback){
     try{
         var jsonBody = JSON.parse(body);
 
@@ -565,7 +568,7 @@ BabelClient.prototype._parseJSON = function(response, body, callback){
  * @returns {boolean}
  * @private
  */
-BabelClient.prototype._log = function (severity, message) {
+BabelClient.prototype._log = function log(severity, message) {
     if (!this.config.enable_debug) {
         return true;
     }
@@ -583,10 +586,10 @@ BabelClient.prototype._log = function (severity, message) {
     }
 };
 
-BabelClient.prototype.debug = function (message) {
+BabelClient.prototype.debug = function debug(message) {
     this._log(DEBUG, message);
 };
-BabelClient.prototype.error = function (message) {
+BabelClient.prototype.error = function error(message) {
     this._log(ERROR, message);
 };
 
@@ -595,6 +598,6 @@ BabelClient.prototype.error = function (message) {
  * @param config
  * @returns {NodeClient}
  */
-exports.createClient = function (config) {
+exports.createClient = function createClient(config) {
     return new BabelClient(config);
 };
