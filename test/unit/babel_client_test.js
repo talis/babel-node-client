@@ -1376,5 +1376,56 @@ describe("Babel Node Client Test Suite", function(){
 
             deleteAnnotation.should.throw("Missing annotationId");
         });
+        it("- should return an error if call to request returns an error", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = {
+                delete:function(options, callback){
+                    var error = new Error('Error communicating with Babel');
+                    callback(error);
+                }
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.deleteAnnotation('secret', 'testid', function(err, result){
+                (err === null).should.be.false;
+                err.message.should.equal('Error communicating with Babel');
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
+        it("- should return an error if call to babel returns an error", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestMock = {};
+
+            var babelErr = { 
+                error: 'not_found',
+                error_description: 'Could not find annotation' 
+            };
+
+            requestMock.delete = function(options, callback){
+                callback(null, {}, babelErr);
+            };
+
+            babel.__set__("request", requestMock);
+
+            babelClient.deleteAnnotation('secret', 'testid', function(err, result){
+                (err === null).should.be.false;
+                err.message.should.equal('Error deleting annotation: ' + JSON.stringify(babelErr));
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
     });
 });

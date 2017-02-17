@@ -397,26 +397,25 @@ BabelClient.prototype.createAnnotation = function(token, data, options, callback
  * @param callback
  */
 BabelClient.prototype.updateAnnotation = function(token, data, callback){
-
-    if(!token){
+    if (!token) {
         throw new Error('Missing Persona token');
     }
-    if(!data._id){
+    if (!data._id) {
         throw new Error('Missing data: _id');
     }
-    if(!data.hasBody){
+    if (!data.hasBody) {
         throw new Error('Missing data: hasBody');
     }
-    if(!data.hasBody.format){
+    if (!data.hasBody.format) {
         throw new Error('Missing data: hasBody.format');
     }
-    if(!data.hasBody.type){
+    if (!data.hasBody.type) {
         throw new Error('Missing data: hasBody.type');
     }
-    if(!data.annotatedBy){
+    if (!data.annotatedBy) {
         throw new Error('Missing data: annotatedBy');
     }
-    if(!data.hasTarget){
+    if (!data.hasTarget) {
         throw new Error('Missing data: hasTarget');
     }
 
@@ -425,18 +424,18 @@ BabelClient.prototype.updateAnnotation = function(token, data, callback){
     if (_.isArray(data.hasTarget)) {
         targets = data.hasTarget;
         if (targets.length===0) {
-            throw new Error("Missing data: hasTarget cannot be empty array");
+            throw new Error('Missing data: hasTarget cannot be empty array');
         }
     } else {
         targets.push(data.hasTarget);
     }
     _.map(targets,function(target) {
-        if (!_.has(target,"uri")) {
-            throw new Error("Missing data: hasTarget.uri is required");
+        if (!_.has(target, 'uri')) {
+            throw new Error('Missing data: hasTarget.uri is required');
         }
         for (var prop in target) {
-            if (!(prop==="uri" || prop==="fragment" || prop==="asReferencedBy" )) {
-                throw new Error("Invalid data: hasTarget has unrecognised property '"+prop+"'");
+            if (!(prop === 'uri' || prop === 'fragment' || prop === 'asReferencedBy' )) {
+                throw new Error('Invalid data: hasTarget has unrecognised property \'' + prop + '\'');
             }
         }
     });
@@ -456,15 +455,14 @@ BabelClient.prototype.updateAnnotation = function(token, data, callback){
     this.debug(JSON.stringify(requestOptions));
 
     request.put(requestOptions, function(err, response, body){
-        if(err){
+        if (err) {
             callback(err);
-        } else{
-
-            if(body.message && body.errors){
+        } else {
+            if (body.message && body.errors) {
                 var babelError = new Error(body.message);
                 babelError.http_code = response.statusCode || 404;
                 callback(babelError);
-            } else{
+            } else {
                 callback(null, body);
             }
         }
@@ -479,11 +477,10 @@ BabelClient.prototype.updateAnnotation = function(token, data, callback){
  * @param callback
  */
 BabelClient.prototype.deleteAnnotation = function(token, annotationId, callback){
-
-    if(!token){
+    if (!token) {
         throw new Error('Missing Persona token');
     }
-    if(!annotationId){
+    if (!annotationId) {
         throw new Error('Missing annotationId');
     }
 
@@ -501,15 +498,15 @@ BabelClient.prototype.deleteAnnotation = function(token, annotationId, callback)
     this.debug(JSON.stringify(requestOptions));
 
     request.delete(requestOptions, function(err, response, body){
-        if(err){
+        if (err) {
             callback(err);
-        } else{
-            if(body.message && body.errors){
-                var babelError = new Error(body.message);
-                babelError.http_code = response.statusCode || 404;
+        } else {
+            if (response.statusCode !== 204){
+                var babelError = new Error('Error deleting annotation: ' + JSON.stringify(body));
+                babelError.http_code = response.statusCode;
                 callback(babelError);
-            } else{
-                callback(null, body);
+            } else {
+                callback(null, null);
             }
         }
     });
