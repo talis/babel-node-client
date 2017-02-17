@@ -1123,4 +1123,258 @@ describe("Babel Node Client Test Suite", function(){
           babelClient._queryStringParams({testk1:'testv1',testk2:'testv2',testk3:'testv3'}).should.equal('testk1=testv1&testk2=testv2&testk3=testv3');
         });
     });
+
+    describe("- Test update of an annotation", function(){
+        it("- should throw error if no persona token supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation(null, null, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing Persona token");
+        });
+        it("- should return an error if no _id supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: _id");
+        });
+        it("- should return an error if no hasBody supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasBody");
+        });
+        it("- should return an error if no hasBody.format supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{}}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasBody.format");
+        });
+
+        it("- should return an error if no hasBody.type supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain'}}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasBody.type");
+        });
+        it("- should return an error if no annotatedBy supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: annotatedBy");
+        });
+        it("- should return an error if hasTarget not supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasTarget");
+        });
+        it("- should return an error if hasTarget as single object has no uri supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:{}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasTarget.uri is required");
+        });
+        it("- should return an error if hasTarget as array contains one or more objects with no uri", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:[{uri: 'foo'}, {}], annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasTarget.uri is required");
+        });
+        it("- should return an error if hasTarget contains unrecognised property", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:{uri: 'foo', something:'else'}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Invalid data: hasTarget has unrecognised property 'something'");
+        });
+        it("- should return an error if hasTarget as array contains one or more objects with unrecognised property", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:[{uri: 'foo'},{uri: 'foo', something:'else'}], annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Invalid data: hasTarget has unrecognised property 'something'");
+        });
+        it("- should return an error (401) if persona token is invalid", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = {
+                put:function(options, callback){
+                    var error = new Error('The token is invalid or has expired');
+                    error.http_code = 401;
+                    callback(error);
+                }
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.updateAnnotation('secret', {_id: 'testid', hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+                (err === null).should.be.false;
+                err.http_code.should.equal(401);
+                err.message.should.equal('The token is invalid or has expired');
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
+
+        it("- should return an error if call to request returns an error", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = {
+                put:function(options, callback){
+                    var error = new Error('Error communicating with Babel');
+                    callback(error);
+                }
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.updateAnnotation('secret', {_id: 'testid', hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+                (err === null).should.be.false;
+                err.message.should.equal('Error communicating with Babel');
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
+
+        it("- should return no errors if everything is successful", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestMock = {};
+            requestMock.put = function(options, callback){
+                callback(null, {}, {
+                    __v: 0,
+                    annotatedBy: 'Gordon Freeman',
+                    _id: '12345678901234567890',
+                    annotatedAt: '2015-02-03T10:28:37.725Z',
+                    motivatedBy: 'The Combine',
+                    hasTarget: {
+                        uri: 'http://example.com/uri'
+                    },
+                    hasBody:{
+                        format: 'text/plain',
+                        type: 'Text',
+                        uri: 'http://example.com/another/uri',
+                        chars: "Eeeee it's dark! Where's that elevator? Eeeee!",
+                        details:{
+                            who: 'Gordon Freeman',
+                            text: "Why don't we have a robot or something to push this sample into the core? This looks sort of dangerous."
+                        }
+                    }
+                });
+            };
+
+            babel.__set__("request", requestMock);
+
+            babelClient.updateAnnotation('secret', {_id: 'testid', hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+                (err === null).should.be.true;
+                result.annotatedBy.should.equal('Gordon Freeman');
+                result.hasTarget.uri.should.equal('http://example.com/uri');
+                result.hasBody.uri.should.equal('http://example.com/another/uri');
+                done();
+            });
+        });
+    });
+    describe("- Test delete of an annotation", function(){
+        it("- should throw error if no persona token supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var deleteAnnotation = function(){
+                return babelClient.deleteAnnotation(null, null, function(err, result){});
+            };
+
+            deleteAnnotation.should.throw("Missing Persona token");
+        });
+        it("- should return an error if no _id supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var deleteAnnotation = function(){
+                return babelClient.deleteAnnotation('token', null, function(err, result){});
+            };
+
+            deleteAnnotation.should.throw("Missing annotationId");
+        });
+    });
 });

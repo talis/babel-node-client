@@ -504,7 +504,6 @@ BabelClient.prototype.deleteAnnotation = function(token, annotationId, callback)
         if(err){
             callback(err);
         } else{
-
             if(body.message && body.errors){
                 var babelError = new Error(body.message);
                 babelError.http_code = response.statusCode || 404;
