@@ -423,7 +423,7 @@ BabelClient.prototype.updateAnnotation = function(token, data, callback){
     var targets = [];
     if (_.isArray(data.hasTarget)) {
         targets = data.hasTarget;
-        if (targets.length===0) {
+        if (targets.length === 0) {
             throw new Error('Missing data: hasTarget cannot be empty array');
         }
     } else {
