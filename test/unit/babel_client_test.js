@@ -7,22 +7,21 @@ var should = require('should'),
 
 describe("Babel Node Client Test Suite", function(){
     describe("- Constructor tests", function(){
-
-        it("should throw error if config.babel_host is not supplied", function(){
+        it("- should throw error if config.babel_host is not supplied", function(){
             var babelClient = function(){
                 return babel.createClient({});
             };
             babelClient.should.throw("Missing Babel config: babel_host");
         });
 
-        it("should throw error if config.babel_port is not supplied", function(){
+        it("- should throw error if config.babel_port is not supplied", function(){
             var babelClient = function(){
                 return babel.createClient({babel_host:'babel'});
             };
             babelClient.should.throw("Missing Babel config: babel_port");
         });
 
-        it("should throw error if config.babel_host doesn't start with http/https", function(){
+        it("- should throw error if config.babel_host doesn't start with http/https", function(){
             var babelClient = function(){
                 return babel.createClient({
                     babel_host:'babel',
@@ -31,7 +30,7 @@ describe("Babel Node Client Test Suite", function(){
             babelClient.should.throw("Invalid Babel config: babel_host");
         });
 
-        it("should NOT throw any error if all config params are defined", function(){
+        it("- should NOT throw any error if all config params are defined", function(){
             var babelClient = function(){
                 return babel.createClient({
                     babel_host:"http://babel",
@@ -43,7 +42,7 @@ describe("Babel Node Client Test Suite", function(){
     });
 
     describe("- Head Target Feed tests", function(){
-        it("should throw error if no target supplied", function(){
+        it("- should throw error if no target supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -55,7 +54,7 @@ describe("Babel Node Client Test Suite", function(){
 
             headTargetFeed.should.throw("Missing target");
         });
-        it("should throw error if no persona token supplied", function(){
+        it("- should throw error if no persona token supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -68,7 +67,7 @@ describe("Babel Node Client Test Suite", function(){
             headTargetFeed.should.throw("Missing Persona token");
         });
 
-        it("head target feed should return an error if call to request returns an error", function(done){
+        it("- should return an error if call to request returns an error when head target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -89,7 +88,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("head target feed should return an error (401) if persona token is invalid", function(done){
+        it("- should return an error (401) if persona token is invalid when head target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -110,7 +109,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("head target feed should return an error (404) if babel returns no feed", function(done){
+        it("- should return an error (404) if babel returns no feed when head target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -130,7 +129,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("head target feed should not return an error if no params set and response from babel is ok", function(done){
+        it("- should not return an error if no params set and response from babel is ok when head target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -150,7 +149,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("head target feed should return response if no error from babel and feed is found with empty params", function(done){
+        it("- should return response if no error from babel and feed is found with empty params when head target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -173,7 +172,7 @@ describe("Babel Node Client Test Suite", function(){
     });
     describe("- Get Target Feed tests", function(){
 
-        it("should throw error if no target supplied", function(){
+        it("- should throw error if no target supplied", function(){
             var babelClient = babel.createClient({
                     babel_host:"http://babel",
                     babel_port:3000
@@ -185,7 +184,7 @@ describe("Babel Node Client Test Suite", function(){
 
             getTargetFeed.should.throw("Missing target");
         });
-        it("should throw error if no persona token supplied", function(){
+        it("- should throw error if no persona token supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -197,7 +196,7 @@ describe("Babel Node Client Test Suite", function(){
 
             getTargetFeed.should.throw("Missing Persona token");
         });
-        it("should not cause an error if no options passed in", function(done){
+        it("- should not cause an error if no options passed in", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -217,7 +216,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("get target feed should return an error if call to request returns an error", function(done){
+        it("- should return an error if call to request returns an error when get target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -239,7 +238,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("get target feed should return an error (401) if persona token is invalid", function(done){
+        it("- should return an error (401) if persona token is invalid when get target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -262,7 +261,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("get target feed should return an error (404) if babel returns no feed", function(done){
+        it("- should return an error (404) if babel returns no feed when get target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -284,7 +283,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("get target feed should return results if no error from babel and feed is found", function(done){
+        it("- should return results if no error from babel and feed is found when get target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -328,7 +327,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("should not blow up if invalid JSON returned", function(done){
+        it("- should not blow up if invalid JSON returned", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -353,7 +352,7 @@ describe("Babel Node Client Test Suite", function(){
     });
 
     describe("- Test Querying Multiple Feeds", function(){
-        it("should throw error if no feed ids supplied", function(){
+        it("- should throw error if no feed ids supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -365,7 +364,7 @@ describe("Babel Node Client Test Suite", function(){
 
             getFeeds.should.throw("Missing feeds");
         });
-        it("should throw error if feeds is an empty array", function(){
+        it("- should throw error if feeds is an empty array", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -377,7 +376,7 @@ describe("Babel Node Client Test Suite", function(){
 
             getFeeds.should.throw("Feeds should be an array and must not be empty");
         });
-        it("should throw error if no persona token supplied", function(){
+        it("- should throw error if no persona token supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -390,7 +389,7 @@ describe("Babel Node Client Test Suite", function(){
             getFeeds.should.throw("Missing Persona token");
         });
 
-        it("get feeds should return an error if call to request returns an error", function(done){
+        it("- should return an error if call to request returns an error when get feeds", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -412,7 +411,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("get feeds should return an error (401) if persona token is invalid", function(done){
+        it("- should return an error (401) if persona token is invalid when get feeds", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -435,7 +434,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("get feeds should return an error (404) if babel returns no feeds", function(done){
+        it("- should return an error (404) if babel returns no feeds when get feeds", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -457,7 +456,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("get feeds should return results if no error from babel and feeds are found", function(done){
+        it("- should return results if no error from babel and feeds are found when get feeds", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -508,7 +507,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("should not blow up if invalid JSON returned", function(done){
+        it("- should not blow up if invalid JSON returned", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -533,7 +532,7 @@ describe("Babel Node Client Test Suite", function(){
     });
 
     describe("- Get Annotation tests", function(){
-        it("should throw error if no persona token supplied", function(){
+        it("- should throw error if no persona token supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -545,7 +544,7 @@ describe("Babel Node Client Test Suite", function(){
 
             getAnnotations.should.throw("Missing Persona token");
         });
-        it("should cause an error if no annotation ID is passed in", function(){
+        it("- should cause an error if no annotation ID is passed in", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -558,7 +557,7 @@ describe("Babel Node Client Test Suite", function(){
             getAnnotations.should.throw("Missing annotation ID");
         });
 
-        it("should return an error (401) if persona token is invalid", function(done){
+        it("- should return an error (401) if persona token is invalid", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -580,7 +579,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("should return an error if call to request returns an error", function(done){
+        it("- should return an error if call to request returns an error", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -602,7 +601,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("should return a single annotation if no error from babel", function(done){
+        it("- should return a single annotation if no error from babel", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -640,7 +639,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("should not blow up if invalid JSON returned", function(done){
+        it("- should not blow up if invalid JSON returned", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -665,7 +664,7 @@ describe("Babel Node Client Test Suite", function(){
     });
 
     describe("- Get Annotations Feed tests", function(){
-        it("should throw error if no persona token supplied", function(){
+        it("- should throw error if no persona token supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -677,7 +676,7 @@ describe("Babel Node Client Test Suite", function(){
 
             getAnnotations.should.throw("Missing Persona token");
         });
-        it("should not cause an error if no options passed in", function(){
+        it("- should not cause an error if no options passed in", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -690,7 +689,7 @@ describe("Babel Node Client Test Suite", function(){
             getAnnotations.should.not.throw();
         });
 
-        it("get target feed should return an error (401) if persona token is invalid", function(done){
+        it("- should return an error (401) if persona token is invalid when get target feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -713,7 +712,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("annotations feed should return an error if call to request returns an error", function(done){
+        it("- should return an error if call to request returns an error when annotations feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -735,7 +734,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("annotations feed should return results if no error from babel", function(done){
+        it("- should return results if no error from babel when annotations feed", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -779,7 +778,7 @@ describe("Babel Node Client Test Suite", function(){
                 done();
             });
         });
-        it("should not blow up if invalid JSON returned", function(done){
+        it("- should not blow up if invalid JSON returned", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -804,7 +803,7 @@ describe("Babel Node Client Test Suite", function(){
     });
 
     describe("- Test creation of an annotation", function(){
-        it("should throw error if no persona token supplied", function(){
+        it("- should throw error if no persona token supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -816,7 +815,7 @@ describe("Babel Node Client Test Suite", function(){
 
             createAnnotation.should.throw("Missing Persona token");
         });
-        it("- create annotation should return an error if no hasBody supplied", function(){
+        it("- should return an error if no hasBody supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -828,7 +827,7 @@ describe("Babel Node Client Test Suite", function(){
 
             createAnnotation.should.throw("Missing data: hasBody");
         });
-        it("- create annotation should return an error if no hasBody.format supplied", function(){
+        it("- should return an error if no hasBody.format supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -841,7 +840,7 @@ describe("Babel Node Client Test Suite", function(){
             createAnnotation.should.throw("Missing data: hasBody.format");
         });
 
-        it("- create annotation should return an error if no hasBody.type supplied", function(){
+        it("- should return an error if no hasBody.type supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -853,7 +852,7 @@ describe("Babel Node Client Test Suite", function(){
 
             createAnnotation.should.throw("Missing data: hasBody.type");
         });
-        it("- create annotation should return an error if no annotatedBy supplied", function(){
+        it("- should return an error if no annotatedBy supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -865,7 +864,7 @@ describe("Babel Node Client Test Suite", function(){
 
             createAnnotation.should.throw("Missing data: annotatedBy");
         });
-        it("- create annotation should return an error if hasTarget not supplied", function(){
+        it("- should return an error if hasTarget not supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -877,7 +876,7 @@ describe("Babel Node Client Test Suite", function(){
 
             createAnnotation.should.throw("Missing data: hasTarget");
         });
-        it("- create annotation should return an error if hasTarget as single object has no uri supplied", function(){
+        it("- should return an error if hasTarget as single object has no uri supplied", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -889,7 +888,7 @@ describe("Babel Node Client Test Suite", function(){
 
             createAnnotation.should.throw("Missing data: hasTarget.uri is required");
         });
-        it("- create annotation should return an error if hasTarget as array contains one or more objects with no uri", function(){
+        it("- should return an error if hasTarget as array contains one or more objects with no uri", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -901,7 +900,7 @@ describe("Babel Node Client Test Suite", function(){
 
             createAnnotation.should.throw("Missing data: hasTarget.uri is required");
         });
-        it("- create annotation should return an error if hasTarget contains unrecognised property", function(){
+        it("- should return an error if hasTarget contains unrecognised property", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -913,7 +912,7 @@ describe("Babel Node Client Test Suite", function(){
 
             createAnnotation.should.throw("Invalid data: hasTarget has unrecognised property 'something'");
         });
-        it("- create annotation should return an error if hasTarget as array contains one or more objects with unrecognised property", function(){
+        it("- should return an error if hasTarget as array contains one or more objects with unrecognised property", function(){
             var babelClient = babel.createClient({
                 babel_host:"http://babel",
                 babel_port:3000
@@ -925,7 +924,7 @@ describe("Babel Node Client Test Suite", function(){
 
             createAnnotation.should.throw("Invalid data: hasTarget has unrecognised property 'something'");
         });
-        it("- create annotation should return an error (401) if persona token is invalid", function(done){
+        it("- should return an error (401) if persona token is invalid", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -952,7 +951,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("- create annotation should return an error if call to request returns an error", function(done){
+        it("- should return an error if call to request returns an error", function(done){
             var babel = rewire("../../index.js");
 
             var babelClient = babel.createClient({
@@ -977,7 +976,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("- create annotation should return no errors if everything is successful", function(done){
+        it("- should return no errors if everything is successful", function(done){
 
             var babel = rewire("../../index.js");
 
@@ -1023,7 +1022,7 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
-        it("- create annotation when called with three parameters correctly treats the third as the callback", function(done){
+        it("- should correctly treat the third parameter as the callback when called with three parameters ", function(done){
 
             var babel = rewire("../../index.js");
 
@@ -1071,7 +1070,7 @@ describe("Babel Node Client Test Suite", function(){
     });
 
     describe("- Test generation of query string params", function(){
-        it("should return empty string if no params passed in", function(){
+        it("- should return empty string if no params passed in", function(){
           var babel = require("../../index.js");
 
           var babelClient = babel.createClient({
@@ -1081,7 +1080,7 @@ describe("Babel Node Client Test Suite", function(){
 
           babelClient._queryStringParams().should.equal('');
         });
-        it("should return empty string if params not an object", function(){
+        it("- should return empty string if params not an object", function(){
           var babel = require("../../index.js");
 
           var babelClient = babel.createClient({
@@ -1091,7 +1090,7 @@ describe("Babel Node Client Test Suite", function(){
 
           babelClient._queryStringParams('').should.equal('');
         });
-        it("should return string with one key value pair", function(){
+        it("- should return string with one key value pair", function(){
           var babel = require("../../index.js");
 
           var babelClient = babel.createClient({
@@ -1101,7 +1100,7 @@ describe("Babel Node Client Test Suite", function(){
 
           babelClient._queryStringParams({testk1:'testv1'}).should.equal('testk1=testv1');
         });
-        it("should return string with one key value pair with url encoded strings", function(){
+        it("- should return string with one key value pair with url encoded strings", function(){
             var babel = require("../../index.js");
 
             var babelClient = babel.createClient({
@@ -1112,7 +1111,7 @@ describe("Babel Node Client Test Suite", function(){
             babelClient._queryStringParams({testk1:'testv1=encoded'}).should.equal('testk1=testv1%3Dencoded');
         });
 
-        it("should return string with multiple key value pairs", function(){
+        it("- should return string with multiple key value pairs", function(){
           var babel = require("../../index.js");
 
           var babelClient = babel.createClient({
@@ -1121,6 +1120,343 @@ describe("Babel Node Client Test Suite", function(){
           });
 
           babelClient._queryStringParams({testk1:'testv1',testk2:'testv2',testk3:'testv3'}).should.equal('testk1=testv1&testk2=testv2&testk3=testv3');
+        });
+    });
+
+    describe("- Test update of an annotation", function(){
+        it("- should throw error if no persona token supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation(null, null, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing Persona token");
+        });
+        it("- should return an error if no _id supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: _id");
+        });
+        it("- should return an error if no hasBody supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasBody");
+        });
+        it("- should return an error if no hasBody.format supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{}}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasBody.format");
+        });
+
+        it("- should return an error if no hasBody.type supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain'}}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasBody.type");
+        });
+        it("- should return an error if no annotatedBy supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: annotatedBy");
+        });
+        it("- should return an error if hasTarget not supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasTarget");
+        });
+        it("- should return an error if hasTarget as single object has no uri supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:{}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasTarget.uri is required");
+        });
+        it("- should return an error if hasTarget as array contains one or more objects with no uri", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:[{uri: 'foo'}, {}], annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Missing data: hasTarget.uri is required");
+        });
+        it("- should return an error if hasTarget contains unrecognised property", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:{uri: 'foo', something:'else'}, annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Invalid data: hasTarget has unrecognised property 'something'");
+        });
+        it("- should return an error if hasTarget as array contains one or more objects with unrecognised property", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var updateAnnotation = function(){
+                return babelClient.updateAnnotation('token', {_id: 'testid', hasBody:{format:'text/plain', 'type':'Text'}, hasTarget:[{uri: 'foo'},{uri: 'foo', something:'else'}], annotatedBy:'Gordon Freeman'}, function(err, result){});
+            };
+
+            updateAnnotation.should.throw("Invalid data: hasTarget has unrecognised property 'something'");
+        });
+        it("- should return an error (401) if persona token is invalid", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = {
+                put:function(options, callback){
+                    var error = new Error('The token is invalid or has expired');
+                    error.http_code = 401;
+                    callback(error);
+                }
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.updateAnnotation('secret', {_id: 'testid', hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+                (err === null).should.be.false;
+                err.http_code.should.equal(401);
+                err.message.should.equal('The token is invalid or has expired');
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
+
+        it("- should return an error if call to request returns an error", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = {
+                put:function(options, callback){
+                    var error = new Error('Error communicating with Babel');
+                    callback(error);
+                }
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.updateAnnotation('secret', {_id: 'testid', hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+                (err === null).should.be.false;
+                err.message.should.equal('Error communicating with Babel');
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
+
+        it("- should return no errors if everything is successful", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestMock = {};
+            requestMock.put = function(options, callback){
+                callback(null, {}, {
+                    __v: 0,
+                    annotatedBy: 'Gordon Freeman',
+                    _id: '12345678901234567890',
+                    annotatedAt: '2015-02-03T10:28:37.725Z',
+                    motivatedBy: 'The Combine',
+                    hasTarget: {
+                        uri: 'http://example.com/uri'
+                    },
+                    hasBody:{
+                        format: 'text/plain',
+                        type: 'Text',
+                        uri: 'http://example.com/another/uri',
+                        chars: "Eeeee it's dark! Where's that elevator? Eeeee!",
+                        details:{
+                            who: 'Gordon Freeman',
+                            text: "Why don't we have a robot or something to push this sample into the core? This looks sort of dangerous."
+                        }
+                    }
+                });
+            };
+
+            babel.__set__("request", requestMock);
+
+            babelClient.updateAnnotation('secret', {_id: 'testid', hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+                (err === null).should.be.true;
+                result.annotatedBy.should.equal('Gordon Freeman');
+                result.hasTarget.uri.should.equal('http://example.com/uri');
+                result.hasBody.uri.should.equal('http://example.com/another/uri');
+                done();
+            });
+        });
+    });
+    describe("- Test delete of an annotation", function(){
+        it("- should throw error if no persona token supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var deleteAnnotation = function(){
+                return babelClient.deleteAnnotation(null, null, function(err, result){});
+            };
+
+            deleteAnnotation.should.throw("Missing Persona token");
+        });
+        it("- should return an error if no _id supplied", function(){
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var deleteAnnotation = function(){
+                return babelClient.deleteAnnotation('token', null, function(err, result){});
+            };
+
+            deleteAnnotation.should.throw("Missing annotationId");
+        });
+        it("- should return an error if call to request returns an error", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = {
+                delete:function(options, callback){
+                    var error = new Error('Error communicating with Babel');
+                    callback(error);
+                }
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.deleteAnnotation('secret', 'testid', function(err, result){
+                (err === null).should.be.false;
+                err.message.should.equal('Error communicating with Babel');
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
+        it("- should return an error if call to babel returns an error", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+
+            var requestMock = {};
+
+            var babelErr = {
+                error: 'not_found',
+                error_description: 'Could not find annotation'
+            };
+
+            requestMock.delete = function(options, callback){
+                callback(null, {}, babelErr);
+            };
+
+            babel.__set__("request", requestMock);
+
+            babelClient.deleteAnnotation('secret', 'testid', function(err, result){
+                (err === null).should.be.false;
+                err.message.should.equal('Error deleting annotation: ' + JSON.stringify(babelErr));
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
+    });
+    describe("- Test formulation of baseURL", function(){
+        it("- should return baseURL with port included when not implicit", function(){
+            var config = {
+                babel_host: "http://babel",
+                babel_port: 3000
+            };
+
+            var babelClient = babel.createClient(config);
+
+            babelClient._getBaseURL().should.equal(config.babel_host + ':' + config.babel_port);
+        });
+        it("- should return baseURL without port included when implicit - http", function(){
+            var config = {
+                babel_host: "http://babel",
+                babel_port: 80
+            };
+
+            var babelClient = babel.createClient(config);
+
+            babelClient._getBaseURL().should.equal(config.babel_host);
+        });
+        it("- should return baseURL without port included when implicit - https", function(){
+            var config = {
+                babel_host: "https://babel",
+                babel_port: 443
+            };
+
+            var babelClient = babel.createClient(config);
+
+            babelClient._getBaseURL().should.equal(config.babel_host);
         });
     });
 });
