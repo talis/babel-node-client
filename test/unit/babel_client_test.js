@@ -1427,4 +1427,36 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
     });
+    describe("- Test formulation of baseURL", function(){
+        it("- should return baseURL with port included when not implicit", function(){
+            var config = {
+                babel_host: "http://babel",
+                babel_port: 3000
+            };
+
+            var babelClient = babel.createClient(config);
+
+            babelClient._getBaseURL().should.equal(config.babel_host + ':' + config.babel_port);
+        });
+        it("- should return baseURL without port included when implicit - http", function(){
+            var config = {
+                babel_host: "http://babel",
+                babel_port: 80
+            };
+
+            var babelClient = babel.createClient(config);
+
+            babelClient._getBaseURL().should.equal(config.babel_host);
+        });
+        it("- should return baseURL without port included when implicit - https", function(){
+            var config = {
+                babel_host: "https://babel",
+                babel_port: 443
+            };
+
+            var babelClient = babel.createClient(config);
+
+            babelClient._getBaseURL().should.equal(config.babel_host);
+        });
+    });
 });

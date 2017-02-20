@@ -65,7 +65,7 @@ BabelClient.prototype.headTargetFeed = function headTargetFeed(target, token, pa
 
     var requestOptions = {
         method: "HEAD",
-        url: this.config.babel_host+':'+this.config.babel_port+
+        url: this._getBaseURL() +
           '/feeds/targets/'+md5(target)+'/activity/annotations' + (!_.isEmpty(queryString) ? '?'+queryString : ''),
         headers: {
             'Accept': 'application/json',
@@ -123,7 +123,7 @@ BabelClient.prototype.getTargetFeed = function getTargetFeed(target, token, hydr
     var queryString = this._queryStringParams(params);
 
     var requestOptions = {
-        url: this.config.babel_host+':'+this.config.babel_port+
+        url: this._getBaseURL() +
           '/feeds/targets/'+md5(target)+'/activity/annotations'+((hydrate === true) ? '/hydrate' : '') + (!_.isEmpty(queryString) ? '?'+queryString : ''),
         headers: {
             'Accept': 'application/json',
@@ -166,7 +166,7 @@ BabelClient.prototype.getFeeds = function getFeeds(feeds, token, callback) {
     feeds = feeds.join(",");
 
     var requestOptions = {
-        url: this.config.babel_host + ':' + this.config.babel_port + '/feeds/annotations/hydrate?feed_ids=' + encodeURIComponent(feeds),
+        url: this._getBaseURL() + '/feeds/annotations/hydrate?feed_ids=' + encodeURIComponent(feeds),
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + token,
@@ -204,7 +204,7 @@ BabelClient.prototype.getAnnotation = function getAnnotation(token, id, callback
     var self = this;
 
     var requestOptions = {
-        url: this.config.babel_host+':'+this.config.babel_port+'/annotations/'+id,
+        url: this._getBaseURL() + '/annotations/'+id,
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
@@ -248,7 +248,7 @@ BabelClient.prototype.getAnnotations = function getAnnotations(token, querystrin
     querystringMap = querystringMap || {};
 
     var requestOptions = {
-        url: this.config.babel_host+':'+this.config.babel_port+'/annotations?'+querystring.stringify(querystringMap),
+        url: this._getBaseURL() + '/annotations?' + querystring.stringify(querystringMap),
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
@@ -344,7 +344,7 @@ BabelClient.prototype.createAnnotation = function createAnnotation(token, data, 
         method:'POST',
         body:data,
         json:true,
-        url: this.config.babel_host+':'+this.config.babel_port+'/annotations',
+        url: this._getBaseURL() + '/annotations',
         headers: {
             'Accept': 'application/json',
             'Authorization':'Bearer '+token,
@@ -447,7 +447,7 @@ BabelClient.prototype.updateAnnotation = function updateAnnotation(token, data, 
         method: 'PUT',
         body: data,
         json: true,
-        url: this.config.babel_host + ':' + this.config.babel_port + '/annotations/' + data._id,
+        url: this._getBaseURL() + '/annotations/' + data._id,
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + token,
@@ -490,7 +490,7 @@ BabelClient.prototype.deleteAnnotation = function deleteAnnotation(token, annota
     var requestOptions = {
         method: 'DELETE',
         json: true,
-        url: this.config.babel_host + ':' + this.config.babel_port + '/annotations/' + annotationId,
+        url: this._getBaseURL() + '/annotations/' + annotationId,
         headers: {
             'Accept': 'application/json',
             'Authorization': 'Bearer ' + token,
@@ -513,6 +513,20 @@ BabelClient.prototype.deleteAnnotation = function deleteAnnotation(token, annota
             }
         }
     });
+};
+
+/**
+ * Get the base URL for connecting to Babel
+ * @return {string} URL to connect to
+ */
+BabelClient.prototype._getBaseURL = function getBaseURL() {
+    // check to see if the port should be implicit based on the protocol
+    // if it is, don't bother specifying it on the connection string
+    var implicitPort = _.startsWith(this.config.babel_host, 'https:') &&
+        this.config.babel_port === 443 || _.startsWith(this.config.babel_host, 'http:') &&
+        this.config.babel_port === 80;
+
+    return this.config.babel_host + (implicitPort ? '' : ':' + this.config.babel_port);
 };
 
 /**
