@@ -80,6 +80,24 @@ babelClient.createAnnotations(token, data, function(error, results){
 });
 ```
 
+Update an annotation
+```javascript
+var token = req.personaClient.getToken(req);
+var data = {};
+babelClient.updateAnnotation(token, data, function(error, results){
+    // do stuff
+});
+```
+
+Delete an annotation
+```javascript
+var token = req.personaClient.getToken(req);
+var annotionId = _someId_;
+babelClient.deleteAnnotation(token, annotationId, function(error, results){
+    // do stuff
+});
+```
+
 ### Tests
 ```bash
 $ grunt test
@@ -89,6 +107,9 @@ $ grunt test
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
+0.3.6 - Adds the missing options to update and delete an annotation
+
+0.3.5 - Add host header
 
 0.3.4 - Adds the ability to fetch an individual annotation
 
