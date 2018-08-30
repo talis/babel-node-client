@@ -364,7 +364,7 @@ BabelClient.prototype.createAnnotation = function createAnnotation(token, data, 
         if(err){
             callback(err);
         } else{
-            if(body.message && body.errors){
+            if(!this.responseSuccessful(response) || (body.message && body.errors)){
                 var babelError = new Error(body.message);
                 babelError.http_code = response.statusCode || 404;
                 callback(babelError);
@@ -372,7 +372,7 @@ BabelClient.prototype.createAnnotation = function createAnnotation(token, data, 
                 callback(null, body);
             }
         }
-    });
+    }.bind(this));
 };
 
 /**
@@ -461,7 +461,7 @@ BabelClient.prototype.updateAnnotation = function updateAnnotation(token, data, 
         if (err) {
             callback(err);
         } else {
-            if (body.message && body.errors) {
+            if(!this.responseSuccessful(response) || (body.message && body.errors)){
                 var babelError = new Error(body.message);
                 babelError.http_code = response.statusCode || 404;
                 callback(babelError);
@@ -469,7 +469,7 @@ BabelClient.prototype.updateAnnotation = function updateAnnotation(token, data, 
                 callback(null, body);
             }
         }
-    });
+    }.bind(this));
 };
 
 /**
@@ -605,6 +605,15 @@ BabelClient.prototype.debug = function debug(message) {
 };
 BabelClient.prototype.error = function error(message) {
     this._log(ERROR, message);
+};
+
+BabelClient.prototype.responseSuccessful = function responseSuccessful(response) {
+    if (response && response.statusCode) {
+        if (response.statusCode >= 200 && response.statusCode <= 299) {
+            return true;
+        }
+    }
+    return false;
 };
 
 /**

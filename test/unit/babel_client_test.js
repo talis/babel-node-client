@@ -976,6 +976,31 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
+        it("- should return an error if call to request returns a none 200 response", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = {
+                post:function(options, callback){
+                   var response = {statusCode: 400};
+                    callback(null, response, {body:'', message:'Bad Request'});
+                }
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.createAnnotation('secret', {hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, {}, function(err, result){
+
+                (err === null).should.be.false;
+                err.message.should.equal('Bad Request');
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
+
         it("- should return no errors if everything is successful", function(done){
 
             var babel = rewire("../../index.js");
@@ -987,7 +1012,7 @@ describe("Babel Node Client Test Suite", function(){
 
             var requestMock = {};
             requestMock.post = function(options, callback){
-                callback(null, {}, {
+                callback(null, {statusCode: 201}, {
                     __v: 0,
                     annotatedBy: 'Gordon Freeman',
                     _id: '12345678901234567890',
@@ -1033,7 +1058,7 @@ describe("Babel Node Client Test Suite", function(){
 
             var requestMock = {};
             requestMock.post = function(options, callback){
-                callback(null, {}, {
+                callback(null, {statusCode: 201}, {
                     __v: 0,
                     annotatedBy: 'Gordon Freeman',
                     _id: '12345678901234567890',
@@ -1307,6 +1332,30 @@ describe("Babel Node Client Test Suite", function(){
             });
         });
 
+        it("- should return an error if call to request returns a none 200 response", function(done){
+            var babel = rewire("../../index.js");
+
+            var babelClient = babel.createClient({
+                babel_host:"http://babel",
+                babel_port:3000
+            });
+            var requestStub = {
+                put:function(options, callback){
+                    var response = {statusCode: 400};
+                    callback(null, response, {body:'', message:'Bad Request'});
+                }
+            };
+
+            babel.__set__("request", requestStub);
+
+            babelClient.updateAnnotation('secret', {_id: 'testid', hasBody:{format:'text/plain', type:'Text'}, hasTarget:{uri:'http://example.com'}, annotatedBy:'Gordon Freeman'}, function(err, result){
+                (err === null).should.be.false;
+                err.message.should.equal('Bad Request');
+                (typeof result).should.equal('undefined');
+                done();
+            });
+        });
+
         it("- should return no errors if everything is successful", function(done){
             var babel = rewire("../../index.js");
 
@@ -1317,7 +1366,7 @@ describe("Babel Node Client Test Suite", function(){
 
             var requestMock = {};
             requestMock.put = function(options, callback){
-                callback(null, {}, {
+                callback(null, {statusCode: 200}, {
                     __v: 0,
                     annotatedBy: 'Gordon Freeman',
                     _id: '12345678901234567890',
