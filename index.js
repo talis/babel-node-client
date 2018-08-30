@@ -364,7 +364,7 @@ BabelClient.prototype.createAnnotation = function createAnnotation(token, data, 
         if(err){
             callback(err);
         } else{
-            if(!this.responseSuccessful(response) || (body.message && body.errors)){
+            if(!this._responseSuccessful(response) || (body.message && body.errors)){
                 var babelError = new Error(body.message);
                 babelError.http_code = response.statusCode || 404;
                 callback(babelError);
@@ -461,7 +461,7 @@ BabelClient.prototype.updateAnnotation = function updateAnnotation(token, data, 
         if (err) {
             callback(err);
         } else {
-            if(!this.responseSuccessful(response) || (body.message && body.errors)){
+            if(!this._responseSuccessful(response) || (body.message && body.errors)){
                 var babelError = new Error(body.message);
                 babelError.http_code = response.statusCode || 404;
                 callback(babelError);
@@ -607,7 +607,7 @@ BabelClient.prototype.error = function error(message) {
     this._log(ERROR, message);
 };
 
-BabelClient.prototype.responseSuccessful = function responseSuccessful(response) {
+BabelClient.prototype._responseSuccessful = function responseSuccessful(response) {
     if (response && response.statusCode) {
         if (response.statusCode >= 200 && response.statusCode <= 299) {
             return true;
